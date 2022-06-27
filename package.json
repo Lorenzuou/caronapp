@@ -1,0 +1,30 @@
+{
+  "name": "caronaapp",
+  "version": "1.0.0",
+  "description": "Backend do aplicativo de caronas ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lorenzuou/CaronaApp.git"
+  },
+  "author": "Lorenzo Miniguite Scaramussa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lorenzuou/CaronaApp/issues"
+  },
+  "homepage": "https://github.com/Lorenzuou/CaronaApp#readme",
+  "dependencies": {
+    "config": "^3.3.7",
+    "consign": "^0.1.6",
+    "express": "^4.18.1",
+    "firebase": "^9.8.1",
+    "mongoose": "^6.3.3",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
+    "nodemon": "^2.0.16",
+    "sequelize": "^6.20.0"
+  }
+}
