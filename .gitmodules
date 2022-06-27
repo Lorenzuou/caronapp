@@ -1,0 +1,3 @@
+[submodule "caronapp-flutter"]
+	path = caronapp-flutter
+	url = https://github.com/henrickbart/caronapp-flutter
