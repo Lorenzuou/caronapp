@@ -12,6 +12,7 @@ CREATE TABLE `CARONA` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`espaco` INT NOT NULL,
 	`horario_saida` DATETIME NOT NULL,
+	`data` DATETIME NOT NULL,	
 	`origem` VARCHAR(100) NOT NULL,
 	`destino` VARCHAR(100) NOT NULL,
 	`obs` TEXT(800),
