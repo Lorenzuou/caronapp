@@ -3,7 +3,8 @@ const fs = require('fs');
 const db = {
     host: "localhost",
     user: "lorenzo",
-    password: "senha"
+    password: "senha",
+    database: "Caronapp"
 };
 
 module.exports = db;

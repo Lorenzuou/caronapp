@@ -1,32 +1,43 @@
 
-query = require('../services/db.js');
+db = require('../services/db.js');
 
 async function singup(req, res) {
   //create request route for post a sign up
-  
-    var sql = "INSERT INTO PESSOA (nome, email, senha, sexo) VALUES (?, ?, ?)";
-    var values = [req.body.nome, req.body.email, req.body.senha];
-    // print the values to the console
-    console.log(values);
 
-    query(sql, values, function (err, result) {
+  //handle error
+
+  try {
+    var sql = "INSERT INTO PESSOA (nome, email, senha, sexo) VALUES (?, ?, ?, ?)";
+    var values = [req.body.nome, req.body.senha, req.body.email, req.body.sexo];
+    db.query(sql, values, function (err, result) {
       if (err) throw err;
-      console.log("1 record inserted");
-    });
+      else res.json({ 'message': 'Usuário cadastrado com sucesso!' });
+    }
+    );
+    res.send('Usuário cadastrado com sucesso!');
+  } catch (err) {
+    console.log(err);
+  }
 
-    res.send("1 record inserted");
-  
- 
+
+
+
 }
 
 async function singin(req, res) {
   //create request route for post a sign in
   var sql = "SELECT * FROM PESSOA WHERE email = ? AND senha = ?";
-  var values = [req.body.email, req.body.senha];
-  query(sql, values, function (err, result) {
-    if (err) throw err;
-    console.log(result);
-  });
+
+  try {
+    var values = [req.body.email, req.body.senha];
+    db.query(sql, values, function (err, result) {
+      if (err) throw err;
+      console.log(result);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+
 }
 
 

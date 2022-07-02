@@ -1,13 +1,17 @@
 
 
 //create post route that adds a new carona to the database
+db = require('../services/db.js');
+
 async function addCarona(req, res) {
     //create request route for post a sign up
-    var sql = "INSERT INTO CARONA (id_pessoa, id_carona, destino, origem, data, horario_saida, espaco, obs) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    var values = [req.body.id_pessoa, req.body.id_carona, req.body.id_destino, req.body.id_origem, req.body.data, req.body.hora_carona, req.body.vagas, req.body.obs];
+    var sql = "INSERT INTO CARONA (espaco, horario_saida, data, origem, destino, obs) VALUES (?, ?, ?, ?, ?, ?)";
+    //TODO: 1. padronizar o formato da data para horario saida e data da carona
+        
+    var values = [req.body.espaco, req.body.horario_saida, req.body.data, req.body.origem, req.body.destino, req.body.obs];
     // print the values to the console
     console.log(values);
-    query(sql, values, function (err, result) {
+    db.query(sql, values, function (err, result) {
         if (err) throw err;
         console.log("1 record inserted");
     });
@@ -19,7 +23,7 @@ async function deleteCarona(req, res) {
     //create request route for delete a carona
     var sql = "DELETE FROM carona WHERE id_carona = ?";
     var values = [req.body.id_carona];
-    query(sql, values, function (err, result) {
+    db.query(sql, values, function (err, result) {
         if (err) throw err;
         console.log("1 record deleted");
     });
@@ -31,7 +35,7 @@ async function deleteCarona(req, res) {
 async function getCaronas(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM carona";
-    query(sql, function (err, result) {
+    db.query(sql, function (err, result) {
         if (err) throw err;
         console.log(result);
     });
@@ -44,7 +48,7 @@ async function getCaronasDestino(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM carona WHERE destino LIKE ?";
     var values = [req.body.id_destino];
-    query(sql, values, function (err, result) {
+    db.query(sql, values, function (err, result) {
         if (err) throw err;
         console.log(result);
     });
@@ -54,7 +58,7 @@ async function getCaronasOrigem(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM carona WHERE origem LIKE ?";
     var values = [req.body.id_destino];
-    query(sql, values, function (err, result) {
+    db.query(sql, values, function (err, result) {
         if (err) throw err;
         console.log(result);
     });
@@ -69,7 +73,7 @@ async function getCaronaById(req, res) {
     //create request route for get carona by id
     var sql = "SELECT * FROM carona WHERE id_carona = ?";
     var values = [req.params.id_carona];
-    query(sql, values, function (err, result) {
+    db.query(sql, values, function (err, result) {
         if (err) throw err;
         console.log(result);
     });
