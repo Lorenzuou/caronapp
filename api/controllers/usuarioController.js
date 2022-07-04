@@ -1,6 +1,37 @@
 
 db = require('../services/db.js');
 
+
+
+const passport = require('passport');
+
+
+
+
+
+
+
+// create login function
+async function login(req, res) {
+
+  const express = require('express');
+
+
+  router.post('/',
+    passport.authenticate('local', {
+      successRedirect: '/',
+      failureRedirect: '/login?fail=true'
+    })
+  );
+
+}
+
+
+
+
+
+
+
 async function singup(req, res) {
   //create request route for post a sign up
 
