@@ -2,22 +2,9 @@ const expres = require('express');
 const bodyParser = require('body-parser');
 
 
-
-const passport = require('passport');
-const session = require('express-session');
-
 const app = expres();
 const port = process.env.PORT || 3000;
 const routes = require('./api/routes/routes');
-
-const loginRouter = require('./api/configs/login');
-
-
-
-// app.use('/login', loginRouter);
-// app.use('/users', authenticationMiddleware, usersRouter);
-// app.use('/', authenticationMiddleware,  indexRouter);
-
 
 //autenticação
 require('./api/configs/auth')(passport);
@@ -51,35 +38,10 @@ app.get('/', (req, res) => {
 })
 
 
-/* Error handler middleware */
-app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  console.error(err.message, err.stack);
-  res.status(statusCode).json({'message': err.message});
-  
-  return;
-});
-
-
-
 
 
 
 var mysql = require('mysql2');
-
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "lorenzo",
-  password: "senha"
-});
-
-
-
-
-con.connect(function(err) {
-  if (err) throw err;
-  else console.log("Conectado ao banco de dados!");
-});
 
 
 

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const usuarioController = require('../controllers/usuarioController');
 const caronaController = require('../controllers/caronaController');
+const login = require('../middleware/login');
 
 
 
@@ -14,9 +15,10 @@ const caronaController = require('../controllers/caronaController');
 //Usuario routes
 
 
-router.post('/singin', usuarioController.singin);
 
 router.post('/singup', usuarioController.singup);
+
+router.post('/login', usuarioController.login);
 
 
 
@@ -28,7 +30,7 @@ router.post('/singup', usuarioController.singup);
 
 //Carona routes
 
-router.post('/addCarona', caronaController.addCarona);
+router.post('/addCarona',login.required, caronaController.addCarona);
 
 
 router.post('/deleteCarona', caronaController.deleteCarona);
