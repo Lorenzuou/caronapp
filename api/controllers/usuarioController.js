@@ -15,15 +15,18 @@ const jwt = require('jsonwebtoken');
 async function login(req, res) {
 
   //create request route for post a sign in
-  var sql = "SELECT * FROM PESSOA WHERE email = ? AND senha = ?";
+  var sql = "SELECT * FROM PESSOA WHERE email = ? ";
 
   try {
     var values = [req.body.email, req.body.senha];
-    var values_db = await db.query(sql, values, function (err, result) {
-      if (err) throw res.status(500).send('Erro ao realizar login');
-      console.log(result);
+    
+
+    var values_db = await db.query(sql,[ req.body.email], function (err, result) {
+      if (err) throw res.status(500).send('Erro ao realizar login 1 ');
+      // console.log(result);
     });
 
+    console.log(values_db)
     if (await bcrypt.compare(req.body.senha, values_db[0].senha)) {
       //create token
       var token = jwt.sign({ id: values_db[0].id }, process.env.JWT_KEY, { expiresIn: '1h' });
@@ -35,7 +38,7 @@ async function login(req, res) {
     return res.status(401).send('Usuário ou senha inválidos');
   } catch (err) {
     console.log(err);
-    return res.status(500).send('Erro ao realizar login');
+    return res.status(500).send('Erro ao realizar login 2');
   }
 
 }
@@ -53,7 +56,7 @@ async function singup(req, res) {
 
   try {
     var sql = "INSERT INTO PESSOA (nome, email, senha, sexo) VALUES (?, ?, ?, ?)";
-    var values = [req.body.nome, req.body.senha, req.body.email, req.body.sexo];
+    var values = [req.body.nome, req.body.email, req.body.senha, req.body.sexo];
 
     //TODO: verificação de senha e outros campos 
 
@@ -61,7 +64,7 @@ async function singup(req, res) {
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(req.body.senha, salt);
     values[2] = hash;
-
+    console.log(values)
     db.query(sql, values, function (err, result) {
       if (err) throw err;
       else res.json({ 'message': 'Usuário cadastrado com sucesso!', 'usuarioCriado': values[0] });
@@ -103,6 +106,7 @@ async function singin(req, res) {
 module.exports = {
   singup,
   singin,
+  login
 
 };
 
