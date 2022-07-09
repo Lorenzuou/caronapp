@@ -19,9 +19,9 @@ async function login(req, res) {
 
   try {
     var values = [req.body.email, req.body.senha];
-    
 
-    var values_db = await db.query(sql,[ req.body.email], function (err, result) {
+
+    var values_db = await db.query(sql, [req.body.email], function (err, result) {
       if (err) throw res.status(500).send('Erro ao realizar login 1 ');
       // console.log(result);
     });
@@ -76,28 +76,119 @@ async function singup(req, res) {
     console.log(err);
     return res.status(500).send('Erro ao realizar cadastro');
   }
-
-
-
-
 }
 
-async function singin(req, res) {
-  //create request route for post a sign in
-  var sql = "SELECT * FROM PESSOA WHERE email = ? AND senha = ?";
 
+async function getById(req, res) {
+  //create request route for get a pessoa
+  var sql = "SELECT * FROM PESSOA WHERE id_pessoa = ?";
+  var values = [req.params.id];
   try {
-    var values = [req.body.email, req.body.senha];
-    db.query(sql, values, function (err, result) {
-      if (err) throw err;
+    var pessoa = await db.query(sql, values, function (err, result) {
+      if (err) throw res.status(500).send('Erro ao buscar pessoa');
       console.log(result);
-    });
+    }
+    );
+    res.json(pessoa);
   } catch (err) {
     console.log(err);
+    return res.status(500).send('Erro ao realizar busca');
   }
+}
+
+async function getByEmail(req, res) {
+  //create request route for get a pessoa
+  var sql = "SELECT * FROM PESSOA WHERE email = ?";
+  var values = [req.params.email];
+  try {
+    var pessoa = await db.query(sql, values, function (err, result) {
+      if (err) throw res.status(500).send('Erro ao buscar pessoa');
+      console.log(result);
+    }
+    );
+    res.json(pessoa);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send('Erro ao realizar busca');
+  }
+}
+
+async function deletePessoa(req, res) {
+  //create request route for delete a pessoa
+  var sql = "DELETE FROM PESSOA WHERE id_pessoa = ?";
+  var values = [req.params.id];
+  db.query(sql, values, function (err, result) {
+    if (err) throw err;
+    console.log("1 record deleted");
+  }
+  );
+  res.send("1 record deleted");
 
 }
 
+
+async function updatePessoa(req, res) {
+  //create request route for update a pessoa
+  let sql = "UPDATE PESSOA SET nome = ?, email = ?, senha = ?, sexo = ? WHERE id_pessoa = ?";
+  let values = [req.body.nome, req.body.email, req.body.senha, req.body.sexo, req.params.id];
+  try {
+    db.query(sql, values, function (err, result) {
+      if (err) throw err;
+      console.log("1 record updated");
+    }
+    );
+    res.send("1 record updated");
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send('Erro ao realizar atualização');
+  }
+}
+
+async function getAllPessoas(req, res) {
+  //create request route for get all pessoa
+  var sql = "SELECT * FROM PESSOA";
+  try {
+    let values_db = db.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log(result);
+    }
+    );
+
+    res.json(values_db);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send('Erro do servidor');
+  }
+}
+
+
+
+// TODO: Como avaliar? 
+
+
+async function avaliar(req, res) {
+  //update nota from pessoa
+  let nota
+  if (req.body.getNota == true) {
+    let sql = "SELECT nota FROM PESSOA WHERE id_pessoa = ?";
+    let values = [req.params.id];
+    nota = db.query(sql, values, function (err, result) {
+      if (err) throw res.status(500).send('Erro ao buscar nota da pessa');
+      console.log(result);
+    });
+  } else {
+    nota = req.body.nota;
+  }
+  let sql = "UPDATE PESSOA SET nota = ? WHERE id_pessoa = ?";
+  let values = [nota, req.params.id];
+  db.query(sql, values, function (err, result) {
+    if (err) throw res.status(500).send('Erro ao atualizar nota da pessa');
+    console.log(result);
+  });
+
+  res.send("1 record updated");
+
+}
 
 
 
@@ -105,8 +196,16 @@ async function singin(req, res) {
 
 module.exports = {
   singup,
-  singin,
-  login
+  login,
+  deletePessoa,
+  getById,
+  getByEmail,
+  getAll,
+  updatePessoa,
+  getAllPessoas,
+  avaliar,
+
+
 
 };
 
