@@ -169,22 +169,29 @@ async function getAllPessoas(req, res) {
 async function avaliar(req, res) {
   //update nota from pessoa
   let nota
-  if (req.body.getNota == true) {
-    let sql = "SELECT nota FROM PESSOA WHERE id_pessoa = ?";
+  
+    let sql = "SELECT nota, num_avaliacoes FROM PESSOA WHERE id_pessoa = ?";
     let values = [req.params.id];
-    nota = db.query(sql, values, function (err, result) {
+    console.log(values)
+    values_db = await db.query(sql, values, function (err, result) {
       if (err) throw res.status(500).send('Erro ao buscar nota da pessa');
       console.log(result);
     });
-  } else {
-    nota = req.body.nota;
-  }
-  let sql = "UPDATE PESSOA SET nota = ? WHERE id_pessoa = ?";
-  let values = [nota, req.params.id];
-  db.query(sql, values, function (err, result) {
-    if (err) throw res.status(500).send('Erro ao atualizar nota da pessa');
-    console.log(result);
-  });
+    console.log(values_db)
+    nota_nova = req.body.nota;
+  
+    num_avaliacoes =values_db[0].num_avaliacoes + 1;
+    nota_atualizada = (nota_nova + values_db[0].nota  ) / num_avaliacoes;
+  
+  
+
+  
+  // let sql = "UPDATE PESSOA SET nota = ? WHERE id_pessoa = ?";
+  // let values = [nota_atualizada, req.params.id];
+  // db.query(sql, values, function (err, result) {
+  //   if (err) throw res.status(500).send('Erro ao atualizar nota da pessa');
+  //   console.log(result);
+  // });
 
   res.send("1 record updated");
 
@@ -200,7 +207,6 @@ module.exports = {
   deletePessoa,
   getById,
   getByEmail,
-  getAll,
   updatePessoa,
   getAllPessoas,
   avaliar,

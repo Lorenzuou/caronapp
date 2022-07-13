@@ -1,3 +1,4 @@
+-- Active: 1657307972966@@127.0.0.1@3306@Caronapp
 CREATE TABLE `PESSOA` (
 	`id` INT unsigned NOT NULL AUTO_INCREMENT,
 	`senha` VARCHAR(255) NOT NULL,
@@ -6,6 +7,7 @@ CREATE TABLE `PESSOA` (
 	`nota` DOUBLE DEFAULT '5',
 	`sexo` CHAR(1) NOT NULL,
 	`creditos` INT DEFAULT '0',
+	`num_avaliacoes` INT DEFAULT '0',
 	PRIMARY KEY (`id`)
 );
 
@@ -21,7 +23,6 @@ CREATE TABLE `CARONA` (
 	`status` INT DEFAULT '0',
 	PRIMARY KEY (`id`)
 );
-
 
 
 
@@ -42,8 +43,6 @@ CREATE TABLE `CARONA_PESSOA_COMENTARIO` (
 	`data` DATETIME NOT NULL,
 	PRIMARY KEY (`id`)
 );
-
-
 
 
 

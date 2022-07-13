@@ -20,7 +20,6 @@ const routes = require('./api/routes/routes');
 // app.use('./api/configs/login', loginRouter);
 
 
-console.log("Server running on port " + port);
 
 app.use(bodyParser.json());
 app.use(

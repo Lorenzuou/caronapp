@@ -44,9 +44,9 @@ async function getCaronas(req, res) {
 
 
 
-function getLike(sql) {
+function getQuery(sql) {
     try {
-        var values = [req.body.id_destino];
+        var values = [req.body.value];
         let values_db = db.query(sql, values, function (err, result) {
             if (err) throw err;
             console.log(result);
@@ -62,14 +62,21 @@ function getLike(sql) {
 async function getCaronasDestino(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM carona WHERE destino LIKE ?";
-    getLike(sql);
+    getQuery(sql);
 }
 
 async function getCaronasOrigem(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM carona WHERE origem LIKE ?";
-    getLike(sql);
+    getQuery(sql);
 } 
+
+async function getCaronaById(req, res) {
+    //create request route for get all caronas
+    var sql = "SELECT * FROM carona WHERE id_carona = ?";
+    getQuery(sql);
+}
+
         
 module.exports = {
     getCaronas,
@@ -78,4 +85,5 @@ module.exports = {
     getCaronasDestino,
     getCaronasOrigem,
     getCaronaById,
+    
 };

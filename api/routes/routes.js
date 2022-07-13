@@ -21,7 +21,7 @@ router.post('/singup', usuarioController.singup);
 router.post('/login', usuarioController.login);
 
 
-
+router.post('/avaliar',usuarioController.avaliar);
 
 
 
