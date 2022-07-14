@@ -5,17 +5,30 @@ db = require('../services/db.js');
 
 async function addCarona(req, res) {
     //create request route for post a sign up
+    const moment = require('moment');
+
     var sql = "INSERT INTO CARONA (espaco, horario_saida, data, origem, destino, obs) VALUES (?, ?, ?, ?, ?, ?)";
     //TODO: 1. padronizar o formato da data para horario saida e data da carona
 
-    var values = [req.body.espaco, req.body.horario_saida, req.body.data, req.body.origem, req.body.destino, req.body.obs];
-    // print the values to the console
-    console.log(values);
-    db.query(sql, values, function (err, result) {
-        if (err) throw err;
-        console.log("1 record inserted");
-    });
-    res.send("1 record inserted");
+    //write horario_saida as a SQL datetime format
+    var horario_saida = moment(req.body.horario_saida, 'HH:mm').format('YYYY-MM-DD HH:mm:ss'); 
+
+    console.log("EU TO AQUI" + horario_saida);
+    let data = moment(req.body.data, 'DD/MM/YYYY').format('YYYY-MM-DD');
+    console.log("EU TO AQUI" + data);
+
+    var values = [req.body.espaco, horario_saida, data, req.body.origem, req.body.destino, req.body.obs];
+    try {
+        db.query(sql, values, function (err, result) {
+            if (err) throw err;
+            console.log("1 record inserted");
+        });
+        res.send("1 record inserted");
+    }catch(err){
+        console.log(err);
+        return res.status(500).send('Erro do servidor');
+    }    
+
 }
 
 

@@ -23,13 +23,14 @@ router.post('/login', usuarioController.login);
 
 router.post('/avaliar',usuarioController.avaliar);
 
-
+router.get('/getNota/:id',usuarioController.getNota);
 
 
 
 
 //Carona routes
 
+// router.post('/addCarona',login.required, caronaController.addCarona);
 router.post('/addCarona',login.required, caronaController.addCarona);
 
 

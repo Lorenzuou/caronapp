@@ -7,7 +7,7 @@ CREATE TABLE `PESSOA` (
 	`nota` DOUBLE DEFAULT '5',
 	`sexo` CHAR(1) NOT NULL,
 	`creditos` INT DEFAULT '0',
-	`num_avaliacoes` INT DEFAULT '0',
+	`num_avaliacoes` INT DEFAULT '1',
 	PRIMARY KEY (`id`)
 );
 
@@ -15,7 +15,7 @@ CREATE TABLE `CARONA` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`espaco` INT NOT NULL,
 	`horario_saida` DATETIME NOT NULL,
-	`data` DATETIME NOT NULL,	
+	`data` DATE NOT NULL,	
 	`origem` VARCHAR(100) NOT NULL,
 	`destino` VARCHAR(100) NOT NULL,
 	`nota` INT DEFAULT '5',
@@ -43,7 +43,6 @@ CREATE TABLE `CARONA_PESSOA_COMENTARIO` (
 	`data` DATETIME NOT NULL,
 	PRIMARY KEY (`id`)
 );
-
 
 
 

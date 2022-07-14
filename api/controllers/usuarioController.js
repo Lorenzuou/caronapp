@@ -81,7 +81,7 @@ async function singup(req, res) {
 
 async function getById(req, res) {
   //create request route for get a pessoa
-  var sql = "SELECT * FROM PESSOA WHERE id_pessoa = ?";
+  var sql = "SELECT * FROM PESSOA WHERE id = ?";
   var values = [req.params.id];
   try {
     var pessoa = await db.query(sql, values, function (err, result) {
@@ -115,7 +115,7 @@ async function getByEmail(req, res) {
 
 async function deletePessoa(req, res) {
   //create request route for delete a pessoa
-  var sql = "DELETE FROM PESSOA WHERE id_pessoa = ?";
+  var sql = "DELETE FROM PESSOA WHERE id = ?";
   var values = [req.params.id];
   db.query(sql, values, function (err, result) {
     if (err) throw err;
@@ -129,7 +129,7 @@ async function deletePessoa(req, res) {
 
 async function updatePessoa(req, res) {
   //create request route for update a pessoa
-  let sql = "UPDATE PESSOA SET nome = ?, email = ?, senha = ?, sexo = ? WHERE id_pessoa = ?";
+  let sql = "UPDATE PESSOA SET nome = ?, email = ?, senha = ?, sexo = ? WHERE id = ?";
   let values = [req.body.nome, req.body.email, req.body.senha, req.body.sexo, req.params.id];
   try {
     db.query(sql, values, function (err, result) {
@@ -169,34 +169,51 @@ async function getAllPessoas(req, res) {
 async function avaliar(req, res) {
   //update nota from pessoa
   let nota
-  
-    let sql = "SELECT nota, num_avaliacoes FROM PESSOA WHERE id_pessoa = ?";
-    let values = [req.params.id];
-    console.log(values)
+
+  let sql = "SELECT nota, num_avaliacoes FROM PESSOA WHERE id = ?";
+  let values = [req.body.id];
+  try {
     values_db = await db.query(sql, values, function (err, result) {
       if (err) throw res.status(500).send('Erro ao buscar nota da pessa');
       console.log(result);
     });
-    console.log(values_db)
     nota_nova = req.body.nota;
-  
-    num_avaliacoes =values_db[0].num_avaliacoes + 1;
-    nota_atualizada = (nota_nova + values_db[0].nota  ) / num_avaliacoes;
-  
-  
 
-  
-  // let sql = "UPDATE PESSOA SET nota = ? WHERE id_pessoa = ?";
-  // let values = [nota_atualizada, req.params.id];
-  // db.query(sql, values, function (err, result) {
-  //   if (err) throw res.status(500).send('Erro ao atualizar nota da pessa');
-  //   console.log(result);
-  // });
+    num_avaliacoes = values_db[0].num_avaliacoes + 1;
+    nota_atualizada = (nota_nova + values_db[0].nota) / num_avaliacoes;
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send('Erro ao realizar busca');
+  }
+
+  sql = "UPDATE PESSOA SET nota = ?, num_avaliacoes = ? WHERE id = ?";
+
+  values = [nota_atualizada, num_avaliacoes, req.body.id];
+  db.query(sql, values, function (err, result) {
+    if (err) throw res.status(500).send('Erro ao atualizar nota da pessoa');
+    console.log(result);
+  });
 
   res.send("1 record updated");
 
 }
 
+async function getNota(req, res) {
+  //get nota from pessoa
+  let sql = "SELECT nota FROM PESSOA WHERE id = ?";
+  let values = [req.params.id]; 
+  try {
+    values_db = await db.query(sql, values, function (err, result) {
+      if (err) throw res.status(500).send('Erro ao buscar nota da pessa');
+      console.log(result);
+    }
+    );
+    res.json(values_db);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send('Erro ao realizar busca');
+  }
+}
 
 
 
@@ -210,6 +227,8 @@ module.exports = {
   updatePessoa,
   getAllPessoas,
   avaliar,
+  getNota
+  
 
 
 

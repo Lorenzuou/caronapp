@@ -3,11 +3,13 @@ const jwt = require('jsonwebtoken');
 exports.required = (req, res, next) => {
 
     try {
-        const token = req.headers.authorization.split(' ')[1];
+        console.log(req.body.token);
+        const token = req.body.token || req.query.token || req.headers.authorization.split(' ')[1];
         const decode = jwt.verify(token, process.env.JWT_KEY);
         req.user = decode;
         next();
     } catch (error) {
+        console.log(req.body.token);
         return res.status(401).send({ mensagem: 'Falha na autenticação' });
     }
 
@@ -16,7 +18,7 @@ exports.required = (req, res, next) => {
 exports.optional = (req, res, next) => {
 
     try {
-        const token = req.headers.authorization.split(' ')[1];
+        const token =  req.body.token || req.query.token || req.headers.authorization.split(' ')[1];
         const decode = jwt.verify(token, process.env.JWT_KEY);
         req.user = decode;
         next();
