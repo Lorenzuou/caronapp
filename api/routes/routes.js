@@ -31,7 +31,7 @@ router.get('/getNota/:id',usuarioController.getNota);
 //Carona routes
 
 // router.post('/addCarona',login.required, caronaController.addCarona);
-router.post('/addCarona',login.required, caronaController.addCarona);
+router.post('/addCarona', caronaController.addCarona);
 
 
 router.post('/deleteCarona', caronaController.deleteCarona);

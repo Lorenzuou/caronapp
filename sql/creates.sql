@@ -14,13 +14,15 @@ CREATE TABLE `PESSOA` (
 CREATE TABLE `CARONA` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`espaco` INT NOT NULL,
-	`horario_saida` DATETIME NOT NULL,
+	`horario_saida` VARCHAR(4) NOT NULL,
 	`data` DATE NOT NULL,	
 	`origem` VARCHAR(100) NOT NULL,
 	`destino` VARCHAR(100) NOT NULL,
 	`nota` INT DEFAULT '5',
 	`obs` TEXT(800),
 	`status` INT DEFAULT '0',
+	`valor` DOUBLE DEFAULT '0',
+	`id_pessoa` INT NOT NULL,
 	PRIMARY KEY (`id`)
 );
 
@@ -43,6 +45,4 @@ CREATE TABLE `CARONA_PESSOA_COMENTARIO` (
 	`data` DATETIME NOT NULL,
 	PRIMARY KEY (`id`)
 );
-
-
 
