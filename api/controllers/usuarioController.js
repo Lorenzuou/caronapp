@@ -26,16 +26,15 @@ async function login(req, res) {
       // console.log(result);
     });
 
-    console.log(values_db)
     if (await bcrypt.compare(req.body.senha, values_db[0].senha)) {
       //create token
-      var token = jwt.sign({ id: values_db[0].id }, process.env.JWT_KEY, { expiresIn: '1h' });
-      return res.json({ message: "Sucesso na autenticação", token: token });
+      var token = jwt.sign({ id: values_db[0].id }, process.env.JWT_KEY, { expiresIn: '1h', nome: values_db[0].nome });
+      return res.json({ message: "Sucesso na autenticação", token: token, result: true });
 
 
     }
 
-    return res.status(401).send('Usuário ou senha inválidos');
+    return res.json({ message: "Falha na autenticação",result: false });
   } catch (err) {
     console.log(err);
     return res.status(500).send('Erro ao realizar login 2');
