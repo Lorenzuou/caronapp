@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const usuarioController = require('../controllers/usuarioController');
 const caronaController = require('../controllers/caronaController');
+const veiculoController = require('../controllers/veiculoController');
+const grupoController = require('../controllers/grupoController');
 const login = require('../middleware/login');
 
 
@@ -14,7 +16,7 @@ const login = require('../middleware/login');
 
 //Usuario routes
 
-
+//TODO: Colocar autenticação em todas as funções privadas
 
 router.post('/singup', usuarioController.singup);
 
@@ -24,6 +26,8 @@ router.post('/login', usuarioController.login);
 router.post('/avaliar',usuarioController.avaliar);
 
 router.get('/getNota/:id',usuarioController.getNota);
+
+router.post('/avaliarUsuariosCarona',usuarioController.avaliarUsuariosCarona);
 
 
 
@@ -43,13 +47,29 @@ router.get('/getCaronas', caronaController.getCaronas);
 router.get('/getCaronasDestino', caronaController.getCaronasDestino);
 
 
-
-
 router.get('/getCaronasOrigem', caronaController.getCaronasOrigem);
 
 
 
 
+
+//Veiculo routes
+router.post('/addVeiculoCarona', veiculoController.addVeiculoCarona);
+
+router.post('/addVeiculoUsuario', veiculoController.addVeiculoUsuario);
+
+
+
+
+
+
+//grupo routes
+
+router.post('/addGrupo', grupoController.addGrupo);
+
+router.get('/getGrupos', grupoController.getGrupos);
+
+router.get('/getGrupoById', grupoController.getGrupoById);
 
 
 
