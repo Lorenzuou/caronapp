@@ -27,12 +27,48 @@ async function getGrupos(req,res){
 }
 
 async function getGrupoById(req,res){
+
     var sql = "SELECT * FROM GRUPO WHERE id = ?";
     let values = [req.body.id];
     let values_db = utils.getQuery(sql, values);
-    console.log(values_db);
-    res.json(values_db);
+    
+    //get list of caronas from GRUPO_CARONA table
+    var sql2 = "SELECT * FROM GRUPO_CARONA WHERE id_grupo = ?";
+    let values2 = [req.body.id];
+    let values_db2 = utils.getQuery(sql2, values2);
+
+    //for each id_carona, select id,data,valor,origem,destino,vagas
+    var sql3 = "SELECT * FROM CARONA WHERE id = ?";
+    let values3 = [];
+    let caronas = [];
+    for (e of values_db2) {
+        values3.push(e.id_carona);
+        let carona = utils.getQuery(sql3, values3);
+        values_db3.push(carona);
+        // get condutor from CARONA table 
+        var sql4 = "SELECT foto,nome,nota FROM PESSOA WHERE id = ?";
+        let values4 = [carona[0].id_condutor];
+        let condutor = utils.getQuery(sql4, values4);
+        
+        carona[0].condutor = condutor[0];
+
+        caronas.push(carona[0]);
+
+
+    }
+   
+        
+    retorno = {
+        grupo: values_db[0],
+        caronas: caronas
+    }
+
+
+    console.log(retorno);
+    res.json(retorno);
 }
+
+
 
 
 //exports

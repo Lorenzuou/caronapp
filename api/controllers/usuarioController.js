@@ -79,13 +79,37 @@ async function singup(req, res) {
 }
 
 
-async function getById(req, res) {
+async function getUserById(req, res) {
   //create request route for get a pessoa
   var sql = "SELECT * FROM PESSOA WHERE id = ?";
   var values = req.params.id;
   values_db = utils.getQuery(sql, values);
   res.json(values_db);
 
+}
+
+async function getFotoUsuario(req, res) {
+  //get foto from pessoa
+  let sql = "SELECT foto FROM PESSOA WHERE id = ?";
+  let values = [req.params.id];
+  values_db = utils.getQuery(sql, values);
+  res.json(values_db);
+}
+
+async function addFotoUsuario(req, res) {
+  //add foto to pessoa
+  let sql = "UPDATE PESSOA SET foto = ? WHERE id = ?";
+  let values = [req.body.foto, req.params.id];
+  utils.insertDB(sql, values);
+}
+
+
+async function addDocumentacaoUsuario(req, res) {
+  // UPDATE pessoa seting documentacao
+  let sql = "UPDATE PESSOA SET documentacao = ? WHERE id = ?";
+  let values = [req.body.documentacao, req.params.id];
+  utils.insertDB(sql, values);
+  
 }
 
 async function getByEmail(req, res) {
@@ -168,6 +192,9 @@ async function getNota(req, res) {
 
 }
 
+
+
+
 async function avaliarUsuariosCarona(req, res) {
   //update nota from pessoa
   
@@ -188,6 +215,46 @@ async function avaliarUsuariosCarona(req, res) {
   } 
 }
 
+async function getAvaliaoesUsuario(req, res) {
+  //get nota from pessoa
+  let sql = "SELECT * FROM CARONA_USUARIO_AVALIACAO WHERE id_usuario = ?";
+  let values = req.params.id;
+  values_db = utils.getQuery(sql, values);
+
+  //for each id_usuario, select nome and foto 
+  let sql2 = "SELECT nome, foto FROM PESSOA WHERE id = ?";
+  values_return = [];
+  for (e of values_db) {
+    values = [e.id_usuario];
+    values_db2 = utils.getQuery(sql2, values);
+    e.nome = values_db2[0].nome;
+    e.foto = values_db2[0].foto;
+    values_return.push(e);
+  }
+  res.json(values_return);
+
+  res.json(values_db);
+}
+
+
+async function getVeiculosUsuario(req, res) {
+   //get veiculos from pessoa from VEICULO_USUARIO table
+  let sql = "SELECT * FROM VEICULO_USUARIO WHERE id_usuario = ?";
+  let values = req.params.id;
+  values_db = utils.getQuery(sql, values);
+  res.json(values_db);
+}
+
+
+async function addVeiculoUsuario(req, res) {
+  //add veiculo to pessoa with all the vehicle info
+  let sql = "INSERT INTO VEICULO_USUARIO (usuario_id, marca, modelo, ano, placa, cor, renavam) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  let values = [req.body.id_usuario, req.body.marca, req.body.modelo, req.body.ano, req.body.placa, req.body.cor, req.body.renavam];
+  utils.insertDB(sql, values);
+  
+}
+
+
 
 
 
@@ -201,7 +268,11 @@ module.exports = {
   getAllPessoas,
   avaliar,
   getNota,
-  avaliarUsuariosCarona
+  avaliarUsuariosCarona,
+  getAvaliaoesUsuario,
+  getFotoUsuario,
+  addFotoUsuario
+
 
 
 
