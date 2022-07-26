@@ -1,9 +1,10 @@
-const expres = require('express');
+const express = require('express');
 const bodyParser = require('body-parser');
 
 require("dotenv").config();
 
-const app = expres();
+const app = express();
+app.use((express.json({limit: '10mb'})));
 const port = process.env.PORT || 8080;
 const routes = require('./api/routes/routes');
 

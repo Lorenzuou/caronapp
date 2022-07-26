@@ -3,16 +3,18 @@
 //create post route that adds a new carona to the database
 db = require('../services/db.js');
 
-let utilss = require('../services/utils.js');
+let utils = require('../services/utils.js');
 
 
 
-
+//essa funcao deve ser chamada quando o usuario finaliza a carona
 
 async function updateCarona(values) {
     //create request route for update a carona
     let sql = "UPDATE CARONA SET origem = ?, destino = ?, data = ?, hora = ?, vagas = ?, valor = ?, veiculocarona = ? WHERE id = ?";
-    values_db = utilss.insertDB(sql, values);
+    utils.insertDB(sql, values).then(function (result) {
+        res.json(result);
+    });
 }
 
 
@@ -30,7 +32,9 @@ async function addCarona(req, res) {
 
     }
     console.log(values)
-    utilss.insertDB(sql, values);
+    utils.insertDB(sql, values).then(function (result) {
+        res.json(result);
+    });
 
 }
 
@@ -38,7 +42,9 @@ async function reservarCarona(req, res) {
     //create request route for post a sign up
     var sql = "INSERT INTO CARONA_USUARIO (idcarona,idusuario) VALUES (?, ?)";
     var values = [req.body.id_carona, req.body.id_usuario];
-    utilss.insertDB(sql, values);
+    utils.insertDB(sql, values).then(function (result) {
+        res.json(result);
+    });
 }
 
 
@@ -68,9 +74,9 @@ async function getCaronas(req, res) {
 
     //for each value in values_db, get the nome local of the origem and destino
     for (let i = 0; i < values_db.length; i++) {
-        let values_db = utilss.getQuery(sql, params[i]);
-        values_db[i].origem = utilss.getNomeLocal(values_db[i].origem);
-        values_db[i].destino = utilss.getNomeLocal(values_db[i].destino);
+        let values_db = utils.getQuery(sql, params[i]);
+        values_db[i].origem = utils.getNomeLocal(values_db[i].origem);
+        values_db[i].destino = utils.getNomeLocal(values_db[i].destino);
     }
     res.json(values_db);
 
@@ -83,8 +89,9 @@ async function getCaronaByUsuario(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM CARONA_USUARIO WHERE usuario_id = ?";
     var values = [req.params.id];
-    values_db = utilss.getQuery(sql, values);
-    res.json(values_db);
+    utils.insertDB(sql, values).then(function (result) {
+        res.json(result);
+    });
 }
 
 
@@ -92,8 +99,9 @@ async function getCaronaByGrupo(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM CARONA WHERE grupo = ?";
     var values = [req.params.id];
-    values_db = utilss.getQuery(sql, values);
-    res.json(values_db);
+    utils.insertDB(sql, values).then(function (result) {
+        res.json(result);
+      });
 
 }
 
@@ -101,7 +109,7 @@ async function getDocumentacaoCondutorCarona(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM carona WHERE condutor = ?";
     params = req.params.id_condutor;
-    values_db = utilss.getQuery(sql, params);
+    values_db = utils.getQuery(sql, params);
     // api do detran para validadr a documentacao do condutor
     res.json({ "documentacao": true });
 
@@ -114,39 +122,40 @@ async function getCaronasDestino(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM carona WHERE destino LIKE ?";
     params = req.params.id_destino;
-    values_db = utilss.getQuery(sql, params);
-    res.json(values_db);
+    utils.insertDB(sql, params).then(function (result) {
+        res.json(result);
+      });
 }
 
 async function getCaronasOrigem(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM carona WHERE origem LIKE ?";
     params = req.params.id_origem;
-    values_db = utilss.getQuery(sql, params);
-    res.json(values_db);
-
+    utils.insertDB(sql, params).then(function (result) {
+        res.json(result);
+      });
 }
 
 async function getCaronaById(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM carona WHERE id_carona = ?";
     params = req.params.id_carona;
-    values_db = utilss.getQuery(sql, params);
+    values_db = utils.getQuery(sql, params);
 
     //select PESSOA from carona_usuario where id_carona = id_carona
     var sql = "SELECT * FROM PESSOA WHERE id_pessoa IN (SELECT id_pessoa FROM carona_usuario WHERE id_carona = ?)";
 
-    values_db_2 = utilss.getQuery(sql, params);
+    values_db_2 = utils.getQuery(sql, params);
     values_db[0].pessoas = values_db_2;
 
     //select VEICULO from carona_veiculo where id_carona = id_carona
     var sql = "SELECT * FROM VEICULO WHERE id_veiculo IN (SELECT id_veiculo FROM carona_veiculo WHERE id_carona = ?)";
-    values_db_3 = utilss.getQuery(sql, params);
+    values_db_3 = utils.getQuery(sql, params);
     values_db[0].veiculos = values_db_3;
 
     //select PESSOA from carona_usuario where condutor = condutor]
     var sql = "SELECT * FROM PESSOA WHERE id_pessoa IN (SELECT id_pessoa FROM carona WHERE condutor = ?)";
-    values_db_4 = utilss.getQuery(sql, params);
+    values_db_4 = utils.getQuery(sql, params);
     values_db[0].condutor = values_db_4;
 
 

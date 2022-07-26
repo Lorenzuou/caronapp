@@ -29,6 +29,12 @@ router.get('/getNota/:id',usuarioController.getNota);
 
 router.post('/avaliarUsuariosCarona',usuarioController.avaliarUsuariosCarona);
 
+router.post('/addFotoUsuario',usuarioController.addFotoUsuario);
+
+router.post('/getFotoUsuario',usuarioController.getFotoUsuario);
+
+router.post('/addDocumentacaoUsuario',usuarioController.addDocumentacaoUsuario);
+
 
 
 

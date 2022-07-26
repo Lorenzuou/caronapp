@@ -14,7 +14,7 @@ async function getQuery(sql, params) {
         return values_db;
     } catch (err) {
         console.log(err);
-        return  res.json({'error': err});
+        return  {'error': err};
 
     }
 }

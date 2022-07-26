@@ -6,11 +6,14 @@ DROP TABLE IF EXISTS `USUARIO`;
 
 CREATE TABLE `USUARIO` (
 	`id` INT unsigned NOT NULL AUTO_INCREMENT,
-	`cpf` VARCHAR(14) NOT NULL,
+	`cpf` VARCHAR(20) NOT NULL,
+    `nome` VARCHAR(100) NOT NULL,
+    `email` VARCHAR(100) NOT NULL,
+    `sexo` VARCHAR(1) NOT NULL,
 	`telefone` VARCHAR(14) NOT NULL,
-	`senha` VARCHAR(50) NOT NULL,
+	`senha` VARCHAR(200) NOT NULL,
 	`cnh` VARCHAR(30),
-	`foto` BLOB,
+	`foto` MEDIUMBLOB,
 	`nota` DOUBLE unsigned NOT NULL DEFAULT '5',
 	`num_avaliacoes` INT unsigned DEFAULT '0',
 	PRIMARY KEY (`id`)

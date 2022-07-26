@@ -16,7 +16,7 @@ const utils = require('../services/utils.js');
 async function login(req, res) {
 
   //create request route for post a sign in
-  var sql = "SELECT * FROM PESSOA WHERE email = ? ";
+  var sql = "SELECT * FROM USUARIO WHERE email = ? ";
 
   try {
     var values = [req.body.email, req.body.senha];
@@ -55,15 +55,15 @@ async function singup(req, res) {
   //handle error
 
   try {
-    var sql = "INSERT INTO PESSOA (nome, email, senha, sexo) VALUES (?, ?, ?, ?)";
-    var values = [req.body.nome, req.body.email, req.body.senha, req.body.sexo];
+    var sql = "INSERT INTO USUARIO (nome, email,cpf, senha, sexo,telefone) VALUES (?, ?,?, ?, ?,?)";
+    var values = [req.body.nome, req.body.email, req.body.cpf, req.body.senha, req.body.sexo, req.body.telefone];
 
     //TODO: verificação de senha e outros campos 
 
     // encript password
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(req.body.senha, salt);
-    values[2] = hash;
+    values[3] = hash;
     console.log(values)
     db.query(sql, values, function (err, result) {
       if (err) throw err;
@@ -80,50 +80,65 @@ async function singup(req, res) {
 
 
 async function getUserById(req, res) {
-  //create request route for get a pessoa
-  var sql = "SELECT * FROM PESSOA WHERE id = ?";
+  //create request route for get a USUARIO
+  var sql = "SELECT * FROM USUARIO WHERE id = ?";
   var values = req.params.id;
-  values_db = utils.getQuery(sql, values);
-  res.json(values_db);
-
+  utils.getQuery(sql, values).then(function (result) {
+    res.json(result);
+  });
 }
 
 async function getFotoUsuario(req, res) {
-  //get foto from pessoa
-  let sql = "SELECT foto FROM PESSOA WHERE id = ?";
-  let values = [req.params.id];
-  values_db = utils.getQuery(sql, values);
-  res.json(values_db);
+  //get foto from USUARIO
+  let sql = "SELECT foto FROM USUARIO WHERE id = ?";
+  let values = [req.body.id];
+  utils.getQuery(sql, values).then(function (result) {
+    //convert result to base64
+    var base64 = Buffer.from(result[0].foto).toString('base64');
+    res.json({ "foto": base64 });
+  });
 }
 
+
+
 async function addFotoUsuario(req, res) {
-  //add foto to pessoa
-  let sql = "UPDATE PESSOA SET foto = ? WHERE id = ?";
-  let values = [req.body.foto, req.params.id];
-  utils.insertDB(sql, values);
+  //add foto to USUARIO
+  let sql = "UPDATE USUARIO SET foto = ? WHERE id = ?";
+
+  let values = [req.body.foto, req.body.id];
+
+  //convert req.body.foto to Blob format
+  utils.insertDB(sql, values).then(function (result) {
+    res.json(result);
+  });
 }
 
 
 async function addDocumentacaoUsuario(req, res) {
-  // UPDATE pessoa seting documentacao
-  let sql = "UPDATE PESSOA SET documentacao = ? WHERE id = ?";
+  // UPDATE USUARIO seting documentacao
+  let sql = "UPDATE USUARIO SET documentacao = ? WHERE id = ?";
   let values = [req.body.documentacao, req.params.id];
-  utils.insertDB(sql, values);
-  
+  utils.insertDB(sql, values).then(function (result) {
+    res.json(result);
+  });
+
 }
 
 async function getByEmail(req, res) {
-  //create request route for get a pessoa
-  var sql = "SELECT * FROM PESSOA WHERE email = ?";
+  //create request route for get a USUARIO
+  var sql = "SELECT * FROM USUARIO WHERE email = ?";
   var values = req.params.email;
-  values_db = utils.getQuery(sql, values);
-  res.json(values_db);
+  utils.getQuery(sql, values).then(function (result) {
+    res.json(result);
+  }
+
+ 
 
 }
 
-async function deletePessoa(req, res) {
-  //create request route for delete a pessoa
-  var sql = "DELETE FROM PESSOA WHERE id = ?";
+async function deleteUSUARIO(req, res) {
+  //create request route for delete a USUARIO
+  var sql = "DELETE FROM USUARIO WHERE id = ?";
   var values = [req.params.id];
   db.query(sql, values, function (err, result) {
     if (err) throw err;
@@ -135,19 +150,20 @@ async function deletePessoa(req, res) {
 }
 
 
-async function updatePessoa(req, res) {
-  //create request route for update a pessoa
-  let sql = "UPDATE PESSOA SET nome = ?, email = ?, senha = ?, sexo = ? WHERE id = ?";
+async function updateUSUARIO(req, res) {
+  //create request route for update a USUARIO
+  let sql = "UPDATE USUARIO SET nome = ?, email = ?, senha = ?, sexo = ? WHERE id = ?";
   let values = [req.body.nome, req.body.email, req.body.senha, req.body.sexo, req.params.id];
   utils.insertDB(sql, values);
 }
 
-async function getAllPessoas(req, res) {
-  //create request route for get all pessoa
-  var sql = "SELECT * FROM PESSOA";
+async function getAllUSUARIOs(req, res) {
+  //create request route for get all USUARIO
+  var sql = "SELECT * FROM USUARIO";
   var values = [];
-  values_db = utils.getQuery(sql, values);
-  res.json(values_db);
+  utils.getQuery(sql, values).then(function (result) {
+    res.json(result);
+  });
 
 }
 
@@ -157,9 +173,9 @@ async function getAllPessoas(req, res) {
 
 
 async function avaliar(id_usuario, avaliacao) {
-  //update nota from pessoa
+  //update nota from USUARIO
 
-  let sql = "SELECT nota, num_avaliacoes FROM PESSOA WHERE id = ?";
+  let sql = "SELECT nota, num_avaliacoes FROM USUARIO WHERE id = ?";
   let values = [id_usuario];
   try {
     values_db = await db.query(sql, values, function (err, result) {
@@ -175,20 +191,25 @@ async function avaliar(id_usuario, avaliacao) {
     return res.status(500).send('Erro ao realizar busca');
   }
 
-  sql = "UPDATE PESSOA SET nota = ?, num_avaliacoes = ? WHERE id = ?";
+  sql = "UPDATE USUARIO SET nota = ?, num_avaliacoes = ? WHERE id = ?";
 
   values = [nota_atualizada, num_avaliacoes, req.body.id];
-  utils.insertDB(sql, values);
-  res.send("1 record updated");
+  utils.getQuery(sql, values).then(function (result) {
+    res.json(result);
+  });
+
+
 
 }
 
 async function getNota(req, res) {
-  //get nota from pessoa
-  let sql = "SELECT nota FROM PESSOA WHERE id = ?";
+  //get nota from USUARIO
+  let sql = "SELECT nota FROM USUARIO WHERE id = ?";
   let values = req.params.id;
-  values_db = utils.getQuery(sql, params);
-  res.json(values_db);
+  utils.getQuery(sql, values).then(function (result) {
+    res.json(result);
+  });
+  
 
 }
 
@@ -196,8 +217,8 @@ async function getNota(req, res) {
 
 
 async function avaliarUsuariosCarona(req, res) {
-  //update nota from pessoa
-  
+  //update nota from USUARIO
+
   for (e of req.body.avaliacoes) {
     //select usuario and update nota
     avaliar(e.id_usuario, e.avaliacao);
@@ -207,22 +228,24 @@ async function avaliarUsuariosCarona(req, res) {
     if (values_db.length == 0) {
       //insert carona_usuario
       sql = "INSERT INTO CARONA_USUARIO_AVALIACAO (id, nota,comentario) VALUES (?, ?, ?)";
-      values = [values_db[0].id, e.avaliacao,e.observacao];
-      utils.insertDB(sql, values);
+      values = [values_db[0].id, e.avaliacao, e.observacao];
+      utils.insertDB(sql, values).then(function (result) {
+        res.json(result);
+      });
     }
 
-    
-  } 
+
+  }
 }
 
 async function getAvaliaoesUsuario(req, res) {
-  //get nota from pessoa
+  //get nota from USUARIO
   let sql = "SELECT * FROM CARONA_USUARIO_AVALIACAO WHERE id_usuario = ?";
   let values = req.params.id;
   values_db = utils.getQuery(sql, values);
 
   //for each id_usuario, select nome and foto 
-  let sql2 = "SELECT nome, foto FROM PESSOA WHERE id = ?";
+  let sql2 = "SELECT nome, foto FROM USUARIO WHERE id = ?";
   values_return = [];
   for (e of values_db) {
     values = [e.id_usuario];
@@ -238,20 +261,23 @@ async function getAvaliaoesUsuario(req, res) {
 
 
 async function getVeiculosUsuario(req, res) {
-   //get veiculos from pessoa from VEICULO_USUARIO table
+  //get veiculos from USUARIO from VEICULO_USUARIO table
   let sql = "SELECT * FROM VEICULO_USUARIO WHERE id_usuario = ?";
   let values = req.params.id;
-  values_db = utils.getQuery(sql, values);
-  res.json(values_db);
+  utils.getQuery(sql, values).then(function (result) {
+    res.json(result);
+  });
 }
 
 
 async function addVeiculoUsuario(req, res) {
-  //add veiculo to pessoa with all the vehicle info
+  //add veiculo to USUARIO with all the vehicle info
   let sql = "INSERT INTO VEICULO_USUARIO (usuario_id, marca, modelo, ano, placa, cor, renavam) VALUES (?, ?, ?, ?, ?, ?, ?)";
   let values = [req.body.id_usuario, req.body.marca, req.body.modelo, req.body.ano, req.body.placa, req.body.cor, req.body.renavam];
-  utils.insertDB(sql, values);
-  
+  utils.insertDB(sql, values).then(function (result) {
+    res.json(result);
+  });
+
 }
 
 
@@ -261,17 +287,21 @@ async function addVeiculoUsuario(req, res) {
 module.exports = {
   singup,
   login,
-  deletePessoa,
-  getById,
+  deleteUSUARIO,
   getByEmail,
-  updatePessoa,
-  getAllPessoas,
+  updateUSUARIO,
+  getAllUSUARIOs,
   avaliar,
   getNota,
   avaliarUsuariosCarona,
   getAvaliaoesUsuario,
   getFotoUsuario,
-  addFotoUsuario
+  addFotoUsuario,
+  getVeiculosUsuario,
+  addVeiculoUsuario,
+  getUserById,
+  addDocumentacaoUsuario
+
 
 
 
