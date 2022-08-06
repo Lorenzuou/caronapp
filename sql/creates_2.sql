@@ -25,7 +25,6 @@ DROP TABLE IF EXISTS `CARONA`;
 
 CREATE TABLE `CARONA` (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`data` DATETIME NOT NULL,
 	`valor` DOUBLE NOT NULL,
 	`origem` INT NOT NULL,
 	`destino` INT NOT NULL,
@@ -33,21 +32,10 @@ CREATE TABLE `CARONA` (
 	`espaco` INT NOT NULL,
 	`obs` TEXT(500),
 	`datainicio` DATETIME NOT NULL,
-	`datafim` DATETIME DEFAULT NULL,
-	`grupo` INT DEFAULT NULL,
+	`datafim` DATETIME ,
+	`grupo` INT,
     `condutor` INT NOT NULL,
 	PRIMARY KEY (`id`)
-);
-
-DROP TABLE IF EXISTS `VEICULO_CARONA`;
-
-CREATE TABLE `VEICULO_CARONA` (
-	`id` INT NOT NULL AUTO_INCREMENT,
-	`ano` VARCHAR(4) NOT NULL,
-	`cor` VARCHAR(15) NOT NULL,
-	`placa` VARCHAR(7) NOT NULL,
-	`renavam` VARCHAR(30) NOT NULL,
-    PRIMARY KEY (`id`)
 );
 
 DROP TABLE IF EXISTS `CARONA_USUARIO`;
@@ -56,7 +44,7 @@ CREATE TABLE `CARONA_USUARIO` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `carona_id` INT NOT NULL,
     `usuario_id` INT NOT NULL,
-    `tipo` VARCHAR(10) NOT NULL,
+    `tipo` VARCHAR(10)  ,
     PRIMARY KEY (`id`)
 );
 
@@ -118,16 +106,52 @@ CREATE TABLE ESTADO(
     PRIMARY KEY (`id`)
 );
 
+
+DROP TABLE IF EXISTS `VEICULO`;
+CREATE TABLE VEICULO(
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `marca` VARCHAR(50) NOT NULL,
+    `nome` VARCHAR(50) NOT NULL,
+    `tipo` VARCHAR(50) ,
+    `capacidade` INT NOT NULL,
+    `foto` MEDIUMBLOB,
+    PRIMARY KEY (`id`)
+);
+
+
+
 DROP TABLE IF EXISTS `VEICULO_USUARIO`;
 
 CREATE TABLE VEICULO_USUARIO(
     `id` INT NOT NULL AUTO_INCREMENT,
-    `modelo` VARCHAR(50) NOT NULL,
-    `marca` VARCHAR(50) NOT NULL,
-    `ano` VARCHAR(4) NOT NULL,
+    `veiculo` INT NOT NULL,
+	`ano` VARCHAR(4) NOT NULL,
     `cor` VARCHAR(15) NOT NULL,
     `placa` VARCHAR(7) NOT NULL,
     `renavam` VARCHAR(30) NOT NULL,
-    `usuario_id` INT NOT NULL,
+    `usuario_id` INT unsigned NOT NULL,
+    
+    FOREIGN KEY (`usuario_id`) REFERENCES `USUARIO`(`id`) ON DELETE CASCADE,
+
+    FOREIGN KEY (`veiculo`) REFERENCES `VEICULO`(`id`) ON DELETE CASCADE,
+
     PRIMARY KEY (`id`)
 );
+
+
+DROP TABLE IF EXISTS `VEICULO_CARONA`;
+
+CREATE TABLE `VEICULO_CARONA` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+    `veiculo` INT NOT NULL,
+	`ano` VARCHAR(4) NOT NULL,
+	`cor` VARCHAR(15) NOT NULL,
+	`placa` VARCHAR(7) NOT NULL,
+	`renavam` VARCHAR(30) NOT NULL,
+    
+
+    FOREIGN KEY (`veiculo`) REFERENCES `VEICULO`(`id`) ON DELETE CASCADE,
+    PRIMARY KEY (`id`)
+);
+
+

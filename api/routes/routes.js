@@ -8,9 +8,6 @@ const login = require('../middleware/login');
 
 
 
-// /* GET programming languages. */
-// router.get('/', programmingLanguagesController.get);
-
 
 
 
@@ -38,9 +35,9 @@ router.post('/addDocumentacaoUsuario',usuarioController.addDocumentacaoUsuario);
 
 
 
-//Carona routes
+// //Carona routes
 
-// router.post('/addCarona',login.required, caronaController.addCarona);
+// // router.post('/addCarona',login.required, caronaController.addCarona);
 router.post('/addCarona', caronaController.addCarona);
 
 
@@ -55,14 +52,20 @@ router.get('/getCaronasDestino', caronaController.getCaronasDestino);
 
 router.get('/getCaronasOrigem', caronaController.getCaronasOrigem);
 
+router.post('/reservarCarona', caronaController.reservarCarona);
 
 
+router.post('/iniciarCarona', caronaController.iniciarCarona);
+
+router.get('/getCaronaById', caronaController.getCaronaById);
 
 
 //Veiculo routes
-router.post('/addVeiculoCarona', veiculoController.addVeiculoCarona);
 
 router.post('/addVeiculoUsuario', veiculoController.addVeiculoUsuario);
+
+router.post('/getVeiculoCarona', veiculoController.getVeiculoCarona);
+
 
 
 

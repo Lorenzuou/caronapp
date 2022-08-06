@@ -1,7 +1,8 @@
 
-
+//request veiculo controller 
+const veiculoController = require('./veiculoController');
 //create post route that adds a new carona to the database
-db = require('../services/db.js');
+const db = require('../services/db.js');
 
 let utils = require('../services/utils.js');
 
@@ -11,37 +12,55 @@ let utils = require('../services/utils.js');
 
 async function updateCarona(values) {
     //create request route for update a carona
-    let sql = "UPDATE CARONA SET origem = ?, destino = ?, data = ?, hora = ?, vagas = ?, valor = ?, veiculocarona = ? WHERE id = ?";
+    let sql = "UPDATE CARONA SET origem = ?, destino = ?, data = ?, hora = ?, espaco = ?, valor = ?, veiculocarona = ? WHERE id = ?";
     utils.insertDB(sql, values).then(function (result) {
         res.json(result);
     });
 }
 
 
-async function addCarona(req, res) {
+
+async function addVeiculoCarona( veiculo) {
     //create request route for post a sign up
+    console.log(veiculo);
+    var sql = "INSERT INTO VEICULO_CARONA (veiculo,ano,cor,placa,renavam) VALUES (?, ?, ?, ?, ?)";
+    var values = [veiculo.veiculo, veiculo.ano, veiculo.cor, veiculo.placa, veiculo.renavam];
+    result = await utils.insertDB(sql, values);
+    return result.insertId;
+       
+   
+}
 
 
-    //TODO: 1. padronizar o formato da data para horario saida e data da carona
-    if (req.body.grupo == null) {
-        var sql = "INSERT INTO CARONA (espaco,datainicio, origem, destino, obs,valor,condutor,veiculocarona) VALUES (?, ?, ?, ?,?, ?, ?,?,?)";
-        var values = [req.body.espaco, req.body.datainicio, req.body.origem, req.body.destino, req.body.obs, req.body.valor, req.body.condutor];
-    } else {
-        var sql = "INSERT INTO CARONA (espaco,datainicio, origem, destino, obs,valor,condutor,grupo,veiculocarona) VALUES (?, ?, ?, ?,?, ?, ?,?,?)";
-        var values = [req.body.espaco, req.body.datainicio, req.body.origem, req.body.destino, req.body.obs, req.body.valor, req.body.condutor, req.body.grupo];
+async function addCarona(req, res) {
 
-    }
-    console.log(values)
+    //select the veiculo with the id of the veiculo from VEICULO_CARONA
+    let sql = "SELECT * FROM VEICULO_USUARIO WHERE id = ?";
+    let values = [req.body.veiculo];
+    let veiculo = await utils.getQuery(sql, values);
+    let id_veiculo_carona = await addVeiculoCarona(veiculo[0]);
+    console.log(id_veiculo_carona)
+    //if grupo == null
+
+    sql = "INSERT INTO CARONA (origem,destino,datainicio,espaco,valor,veiculocarona,grupo,obs,condutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    values = [req.body.origem, req.body.destino, req.body.data, req.body.espaco, req.body.valor, id_veiculo_carona, (req.body.grupo == null ? null : req.body.grupo)  ,  (req.body.obs == null ?  null : req.body.obs), req.body.condutor];
+    
+
+
+    // // values = [veiculo.ano, veiculo.cor, veiculo.placa, veiculo.renavam];
+    console.log(values);
+
     utils.insertDB(sql, values).then(function (result) {
         res.json(result);
+
     });
 
 }
 
 async function reservarCarona(req, res) {
     //create request route for post a sign up
-    var sql = "INSERT INTO CARONA_USUARIO (idcarona,idusuario) VALUES (?, ?)";
-    var values = [req.body.id_carona, req.body.id_usuario];
+    var sql = "INSERT INTO CARONA_USUARIO (carona_id,usuario_id) VALUES (?, ?)";
+    var values = [req.body.carona, req.body.usuario];
     utils.insertDB(sql, values).then(function (result) {
         res.json(result);
     });
@@ -53,8 +72,8 @@ async function reservarCarona(req, res) {
 
 async function deleteCarona(req, res) {
     //create request route for delete a carona
-    var sql = "DELETE FROM carona WHERE id_carona = ?";
-    var values = [req.body.id_carona];
+    var sql = "DELETE FROM carona WHERE id = ?";
+    var values = [req.body.id];
     db.query(sql, values, function (err, result) {
         if (err) throw err;
         console.log("1 record deleted");
@@ -101,7 +120,7 @@ async function getCaronaByGrupo(req, res) {
     var values = [req.params.id];
     utils.insertDB(sql, values).then(function (result) {
         res.json(result);
-      });
+    });
 
 }
 
@@ -124,7 +143,7 @@ async function getCaronasDestino(req, res) {
     params = req.params.id_destino;
     utils.insertDB(sql, params).then(function (result) {
         res.json(result);
-      });
+    });
 }
 
 async function getCaronasOrigem(req, res) {
@@ -133,33 +152,46 @@ async function getCaronasOrigem(req, res) {
     params = req.params.id_origem;
     utils.insertDB(sql, params).then(function (result) {
         res.json(result);
-      });
+    });
 }
 
 async function getCaronaById(req, res) {
     //create request route for get all caronas
-    var sql = "SELECT * FROM carona WHERE id_carona = ?";
-    params = req.params.id_carona;
-    values_db = utils.getQuery(sql, params);
+    var sql = "SELECT * FROM CARONA WHERE id = ?";
+    params = [req.body.id];
+    values_db = await utils.getQuery(sql, params);
 
-    //select PESSOA from carona_usuario where id_carona = id_carona
-    var sql = "SELECT * FROM PESSOA WHERE id_pessoa IN (SELECT id_pessoa FROM carona_usuario WHERE id_carona = ?)";
+    console.log(values_db[0]);
 
-    values_db_2 = utils.getQuery(sql, params);
+    var sql = "SELECT id,foto,nome,nota,num_avaliacoes FROM USUARIO WHERE id IN (SELECT id FROM CARONA_USUARIO WHERE carona_id = ?)";
+
+    values_db_2 = await utils.getQuery(sql, params);
     values_db[0].pessoas = values_db_2;
 
+    // for each value in values_db, comsole.log the usuario
+    for (let i = 0; i < values_db.length; i++) {
+        console.log(values_db[i].pessoas);
+    }
+
+
+
     //select VEICULO from carona_veiculo where id_carona = id_carona
-    var sql = "SELECT * FROM VEICULO WHERE id_veiculo IN (SELECT id_veiculo FROM carona_veiculo WHERE id_carona = ?)";
+    var sql = "SELECT * FROM VEICULO_CARONA WHERE id IN (SELECT id_veiculo FROM VEICULO_CARONA WHERE id_carona = ?)";
     values_db_3 = utils.getQuery(sql, params);
     values_db[0].veiculos = values_db_3;
 
-    //select PESSOA from carona_usuario where condutor = condutor]
-    var sql = "SELECT * FROM PESSOA WHERE id_pessoa IN (SELECT id_pessoa FROM carona WHERE condutor = ?)";
-    values_db_4 = utils.getQuery(sql, params);
-    values_db[0].condutor = values_db_4;
+    // //select VEICULO from carona_veiculo where id_carona = id_carona
+    // var sql = "SELECT * FROM VEICULO_CARONA WHERE id = ?";
+    // values_db_3 = utils.getQuery(sql, params);
+    // values_db[0].veiculos = values_db_3;
 
+    // //select PESSOA from carona_usuario where condutor = condutor]
+    // var sql = "SELECT * FROM PESSOA WHERE id_pessoa IN (SELECT id_pessoa FROM carona WHERE condutor = ?)";
+    // values_db_4 = utils.getQuery(sql, params);
+    // values_db[0].condutor = values_db_4;
 
     res.json(values_db);
+
 
 }
 
@@ -167,7 +199,7 @@ async function getCaronaById(req, res) {
 
 
 async function iniciarCarona(req, res) {
-    carona = getCaronaById(req.params.id_carona);
+    carona = getCaronaById(req.body.id);
     carona.datainicio = new Date();
     carona.status = "Iniciada";
     updateCarona(carona);
@@ -199,6 +231,7 @@ module.exports = {
     reservarCarona,
     iniciarCarona,
     finalizarCarona
+
 
 
 };

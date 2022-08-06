@@ -130,7 +130,7 @@ async function getByEmail(req, res) {
   var values = req.params.email;
   utils.getQuery(sql, values).then(function (result) {
     res.json(result);
-  }
+  });
 
  
 
@@ -270,15 +270,18 @@ async function getVeiculosUsuario(req, res) {
 }
 
 
-async function addVeiculoUsuario(req, res) {
-  //add veiculo to USUARIO with all the vehicle info
-  let sql = "INSERT INTO VEICULO_USUARIO (usuario_id, marca, modelo, ano, placa, cor, renavam) VALUES (?, ?, ?, ?, ?, ?, ?)";
-  let values = [req.body.id_usuario, req.body.marca, req.body.modelo, req.body.ano, req.body.placa, req.body.cor, req.body.renavam];
-  utils.insertDB(sql, values).then(function (result) {
-    res.json(result);
-  });
+// async function addVeiculoUsuario(req, res) {
+  
+//   console.log(req.body);
+//   //add veiculo to USUARIO with all the vehicle info
+//   // let sql = "INSERT INTO VEICULO_USUARIO (usuario_id, marca, modelo, ano, placa, cor, renavam) VALUES (?, ?, ?, ?, ?, ?, ?)";
+//   // let values = [req.body.usuario_id, req.body.marca, req.body.modelo, req.body.ano, req.body.placa, req.body.cor, req.body.renavam];
+//   // console.log(values);
+//   // utils.insertDB(sql, values).then(function (result) {
+//   //   res.json(result);
+//   // });
 
-}
+// }
 
 
 
@@ -298,7 +301,7 @@ module.exports = {
   getFotoUsuario,
   addFotoUsuario,
   getVeiculosUsuario,
-  addVeiculoUsuario,
+  
   getUserById,
   addDocumentacaoUsuario
 
