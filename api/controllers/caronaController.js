@@ -6,6 +6,13 @@ let utils = require('../services/utils.js');
 
 
 
+
+
+
+
+
+
+
 //essa funcao deve ser chamada quando o usuario finaliza a carona
 
 async function updateCarona(values) {
@@ -18,15 +25,15 @@ async function updateCarona(values) {
 
 
 
-async function addVeiculoCarona( veiculo) {
+async function addVeiculoCarona(veiculo) {
     //create request route for post a sign up
     console.log(veiculo);
     var sql = "INSERT INTO VEICULO_CARONA (veiculo,ano,cor,placa,renavam) VALUES (?, ?, ?, ?, ?)";
     var values = [veiculo.veiculo, veiculo.ano, veiculo.cor, veiculo.placa, veiculo.renavam];
     result = await utils.insertDB(sql, values);
     return result.insertId;
-       
-   
+
+
 }
 
 
@@ -37,26 +44,41 @@ async function addCarona(req, res) {
     let values = [req.body.veiculo];
     let veiculo = await utils.getQuery(sql, values);
     let id_veiculo_carona = await addVeiculoCarona(veiculo[0]);
-    console.log(id_veiculo_carona)
-    //if grupo == null
 
-    sql = "INSERT INTO CARONA (origem,destino,datainicio,espaco,valor,veiculocarona,grupo,obs,condutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    values = [req.body.origem, req.body.destino, req.body.data, req.body.espaco, req.body.valor, id_veiculo_carona, (req.body.grupo == null ? null : req.body.grupo)  ,  (req.body.obs == null ?  null : req.body.obs), req.body.condutor];
-    
-    utils.insertDB(sql, values).then(function (result) {
-        res.json(result);
+    //if id_veiculo_carona is null, then the veiculo is not in the database
+    if (id_veiculo_carona == null) {
+        res.json({ "error": "Veiculo não encontrado" });
+    } else {
 
-    });
+
+        sql = "INSERT INTO CARONA (origem,destino,datainicio,espaco,valor,veiculocarona,grupo,obs,condutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        values = [req.body.origem, req.body.destino, req.body.data, req.body.espaco, req.body.valor, id_veiculo_carona, (req.body.grupo == null ? null : req.body.grupo), (req.body.obs == null ? null : req.body.obs), req.body.condutor];
+
+        utils.insertDB(sql, values).then(function (result) {
+            res.json(result);
+
+        });
+    }
 
 }
 
 async function reservarCarona(req, res) {
     //create request route for post a sign up
-    var sql = "INSERT INTO CARONA_USUARIO (carona_id,usuario_id) VALUES (?, ?)";
+    //check if user is already in carona as condutor
+    var sql = "SELECT * FROM CARONA WHERE id = ? AND condutor = ?";
     var values = [req.body.carona, req.body.usuario];
-    utils.insertDB(sql, values).then(function (result) {
-        res.json(result);
-    });
+    var result = await utils.getQuery(sql, values);
+    if (result.length > 0) {
+        res.json({ "reserva": false, "message":"Usuário não pode reservar carona criada por ele mesmo" });
+    } else {
+
+
+        var sql = "INSERT INTO CARONA_USUARIO (carona_id,usuario_id) VALUES (?, ?)";
+        var values = [req.body.carona, req.body.usuario];
+        utils.insertDB(sql, values).then(function (result) {
+            res.json(result);
+        });
+    }
 }
 
 
@@ -80,11 +102,11 @@ async function getCaronas(req, res) {
 
 
     //create request route for get all caronas
-    let sql = "SELECT * FROM CARONA WHERE grupo IS NULL AND origem = ? AND destino = ? AND datainicio = ?";
-    params = [req.body.origem, req.body.destino, req.body.data];
+    let sql = "SELECT * FROM CARONA WHERE grupo IS NULL AND origem = ? AND destino = ? AND datainicio = ? AND condutor != ?";
+    params = [req.body.origem, req.body.destino, req.body.data, req.body.usuario];
     let caronas = await utils.getQuery(sql, params);
     let caronas_retorno = [];
-    
+
     for (let i = 0; i < caronas.length; i++) {
         // get amount of users in carona
         sql = "SELECT COUNT(*) AS qtd FROM CARONA_USUARIO WHERE carona_id = ?";
@@ -95,15 +117,15 @@ async function getCaronas(req, res) {
         //get localizacao as a string
         sql = "SELECT * FROM LOCALIZACAO WHERE id = ?";
         caronas[i].origem_nome = await utils.getNomeLocal(caronas[i].origem);
-        caronas[i].destino_nome =await  utils.getNomeLocal(caronas[i].destino);
-        
-   
+        caronas[i].destino_nome = await utils.getNomeLocal(caronas[i].destino);
+
+
         //get condutor 
         sql = "SELECT * FROM USUARIO WHERE id = ?";
         values = [caronas[i].condutor];
         var condutor = await utils.getQuery(sql, values);
         caronas[i].condutor = condutor[0];
-        
+
         //get veiculo from carona
         sql = "SELECT * FROM VEICULO_CARONA WHERE id = ?";
         values = [caronas[i].veiculocarona];
@@ -112,8 +134,8 @@ async function getCaronas(req, res) {
         caronas_retorno.push(caronas[i]);
     }
 
-    
-    return  res.json(caronas_retorno);
+
+    return res.json(caronas_retorno);
 
 
 }
@@ -183,27 +205,15 @@ async function getCaronaById(req, res) {
     values_db_2 = await utils.getQuery(sql, params);
     values_db[0].pessoas = values_db_2;
 
-    // for each value in values_db, comsole.log the usuario
-    for (let i = 0; i < values_db.length; i++) {
-        console.log(values_db[i].pessoas);
-    }
 
 
 
-    //select VEICULO from carona_veiculo where id_carona = id_carona
-    var sql = "SELECT * FROM VEICULO_CARONA WHERE id IN (SELECT id_veiculo FROM VEICULO_CARONA WHERE id_carona = ?)";
-    values_db_3 = utils.getQuery(sql, params);
-    values_db[0].veiculos = values_db_3;
+    //SELECT VEICULO FROM CARONA
+    var sql = "SELECT * FROM VEICULO_CARONA WHERE id = ?";
+    veiculo_carona = await utils.getQuery(sql, [values_db[0].veiculocarona]);
+    values_db[0].veiculo = veiculo_carona[0];
 
-    // //select VEICULO from carona_veiculo where id_carona = id_carona
-    // var sql = "SELECT * FROM VEICULO_CARONA WHERE id = ?";
-    // values_db_3 = utils.getQuery(sql, params);
-    // values_db[0].veiculos = values_db_3;
-
-    // //select PESSOA from carona_usuario where condutor = condutor]
-    // var sql = "SELECT * FROM PESSOA WHERE id_pessoa IN (SELECT id_pessoa FROM carona WHERE condutor = ?)";
-    // values_db_4 = utils.getQuery(sql, params);
-    // values_db[0].condutor = values_db_4;
+   
 
     res.json(values_db);
 

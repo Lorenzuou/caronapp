@@ -20,17 +20,17 @@ router.post('/singup', usuarioController.singup);
 router.post('/login', usuarioController.login);
 
 
-router.post('/avaliar',usuarioController.avaliar);
+router.post('/avaliar',login.required,usuarioController.avaliar);
 
-router.get('/getNota/:id',usuarioController.getNota);
+router.get('/getNota/:id',login.required,usuarioController.getNota);
 
-router.post('/avaliarUsuariosCarona',usuarioController.avaliarUsuariosCarona);
+router.post('/avaliarUsuariosCarona',login.required,usuarioController.avaliarUsuariosCarona);
 
-router.post('/addFotoUsuario',usuarioController.addFotoUsuario);
+router.post('/addFotoUsuario',login.required,usuarioController.addFotoUsuario);
 
-router.post('/getFotoUsuario',usuarioController.getFotoUsuario);
+router.post('/getFotoUsuario',login.required,usuarioController.getFotoUsuario);
 
-router.post('/addDocumentacaoUsuario',usuarioController.addDocumentacaoUsuario);
+router.post('/addDocumentacaoUsuario',login.required,usuarioController.addDocumentacaoUsuario);
 
 
 
@@ -38,33 +38,33 @@ router.post('/addDocumentacaoUsuario',usuarioController.addDocumentacaoUsuario);
 // //Carona routes
 
 // // router.post('/addCarona',login.required, caronaController.addCarona);
-router.post('/addCarona', caronaController.addCarona);
+router.post('/addCarona',login.required, caronaController.addCarona);
 
 
-router.post('/deleteCarona', caronaController.deleteCarona);
+router.post('/deleteCarona',login.required, caronaController.deleteCarona);
 
 
-router.post('/getCaronas', caronaController.getCaronas);
+router.post('/getCaronas',login.required, caronaController.getCaronas);
 
 
-router.post('/getCaronasDestino', caronaController.getCaronasDestino);
+router.post('/getCaronasDestino',login.required, caronaController.getCaronasDestino);
 
 
-router.post('/getCaronasOrigem', caronaController.getCaronasOrigem);
+router.post('/getCaronasOrigem',login.required, caronaController.getCaronasOrigem);
 
-router.post('/reservarCarona', caronaController.reservarCarona);
+router.post('/reservarCarona',login.required, caronaController.reservarCarona);
 
 
-router.post('/iniciarCarona', caronaController.iniciarCarona);
+router.post('/iniciarCarona',login.required, caronaController.iniciarCarona);
 
-router.post('/getCaronaById', caronaController.getCaronaById);
+router.post('/getCaronaById',login.required, caronaController.getCaronaById);
 
 
 //Veiculo routes
 
-router.post('/addVeiculoUsuario', veiculoController.addVeiculoUsuario);
+router.post('/addVeiculoUsuario',login.required, veiculoController.addVeiculoUsuario);
 
-router.post('/getVeiculoCarona', veiculoController.getVeiculoCarona);
+router.post('/getVeiculoCarona',login.required, veiculoController.getVeiculoCarona);
 
 
 
@@ -74,17 +74,17 @@ router.post('/getVeiculoCarona', veiculoController.getVeiculoCarona);
 
 //grupo routes
 
-router.post('/addGrupo', grupoController.addGrupo);
+router.post('/addGrupo',login.required, grupoController.addGrupo);
 
-router.get('/getGrupos', grupoController.getGrupos);
+router.get('/getGrupos',login.required, grupoController.getGrupos);
 
-router.get('/getGrupoById', grupoController.getGrupoById);
+router.get('/getGrupoById',login.required, grupoController.getGrupoById);
 
-router.post('/addGrupoUsuarioById', grupoController.addGrupoUsuarioById);
+router.post('/addGrupoUsuarioById',login.required, grupoController.addGrupoUsuarioById);
 
-router.post('/addGrupoUsuarioByCodigo', grupoController.addGrupoUsuarioByCodigo);
+router.post('/addGrupoUsuarioByCodigo',login.required, grupoController.addGrupoUsuarioByCodigo);
 
-router.post('/getGruposUsuario', grupoController.getGruposUsuario);
+router.post('/getGruposUsuario',login.required, grupoController.getGruposUsuario);
 
 
 

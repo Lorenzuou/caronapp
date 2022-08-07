@@ -65,7 +65,6 @@ async function singup(req, res) {
     var sql = "INSERT INTO USUARIO (nome, email,cpf, senha, sexo,telefone) VALUES (?, ?,?, ?, ?,?,?)";
     var values = [req.body.nome, req.body.email, req.body.cpf, req.body.senha, req.body.sexo, req.body.telefone, req.body.foto == null ? null : req.body.foto];
 
-    //TODO: verificação de senha e outros campos 
 
     // encript password
     var salt = bcrypt.genSaltSync(10);
@@ -175,7 +174,6 @@ async function getAllUSUARIOs(req, res) {
 
 
 
-// TODO: Como avaliar? 
 
 
 async function avaliar(id_usuario, avaliacao) {
@@ -183,19 +181,14 @@ async function avaliar(id_usuario, avaliacao) {
 
   let sql = "SELECT nota, num_avaliacoes FROM USUARIO WHERE id = ?";
   let values = [id_usuario];
-  try {
-    values_db = await db.query(sql, values, function (err, result) {
-      if (err) throw res.status(500).send('Erro ao buscar nota da pessa');
-      console.log(result);
-    });
-    nota_nova = req.body.nota;
+  
 
-    num_avaliacoes = values_db[0].num_avaliacoes + 1;
-    nota_atualizada = (nota_nova + values_db[0].nota) / num_avaliacoes;
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send('Erro ao realizar busca');
-  }
+  values_db = await utils.getQuery(sql, values);
+
+  nota_nova = avaliacao;
+
+  num_avaliacoes = values_db[0].num_avaliacoes + 1;
+  nota_atualizada = (nota_nova + values_db[0].nota) / num_avaliacoes;
 
   sql = "UPDATE USUARIO SET nota = ?, num_avaliacoes = ? WHERE id = ?";
 
