@@ -44,20 +44,20 @@ router.post('/addCarona', caronaController.addCarona);
 router.post('/deleteCarona', caronaController.deleteCarona);
 
 
-router.get('/getCaronas', caronaController.getCaronas);
+router.post('/getCaronas', caronaController.getCaronas);
 
 
-router.get('/getCaronasDestino', caronaController.getCaronasDestino);
+router.post('/getCaronasDestino', caronaController.getCaronasDestino);
 
 
-router.get('/getCaronasOrigem', caronaController.getCaronasOrigem);
+router.post('/getCaronasOrigem', caronaController.getCaronasOrigem);
 
 router.post('/reservarCarona', caronaController.reservarCarona);
 
 
 router.post('/iniciarCarona', caronaController.iniciarCarona);
 
-router.get('/getCaronaById', caronaController.getCaronaById);
+router.post('/getCaronaById', caronaController.getCaronaById);
 
 
 //Veiculo routes

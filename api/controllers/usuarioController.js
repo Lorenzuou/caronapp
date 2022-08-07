@@ -44,6 +44,13 @@ async function login(req, res) {
 }
 
 
+async function logOut(req, res) {
+  // revoke token from body
+  
+  
+} 
+
+
 
 
 
@@ -262,8 +269,8 @@ async function getAvaliaoesUsuario(req, res) {
 
 async function getVeiculosUsuario(req, res) {
   //get veiculos from USUARIO from VEICULO_USUARIO table
-  let sql = "SELECT * FROM VEICULO_USUARIO WHERE id_usuario = ?";
-  let values = req.params.id;
+  let sql = "SELECT * FROM VEICULO_USUARIO WHERE usuario_id = ?";
+  let values = req.body.id;
   utils.getQuery(sql, values).then(function (result) {
     res.json(result);
   });

@@ -87,19 +87,41 @@ async function getCaronas(req, res) {
 
 
     //create request route for get all caronas
-    var sql = "SELECT * FROM CARONA WHERE grupo = NULL AND origem = ? AND destino = ?";
-    params = [req.params.id_origem, req.params.id_destino];
+    let sql = "SELECT * FROM CARONA WHERE grupo IS NULL AND origem = ? AND destino = ? AND datainicio = ?";
+    params = [req.body.origem, req.body.destino, req.body.data];
+    let caronas = await utils.getQuery(sql, params);
+    let caronas_retorno = [];
+    
+    for (let i = 0; i < caronas.length; i++) {
+        // get amount of users in carona
+        sql = "SELECT COUNT(*) AS qtd FROM CARONA_USUARIO WHERE carona_id = ?";
+        values = [caronas[i].id];
+        var qtd = await utils.getQuery(sql, values);
+        caronas[i].espaco = caronas[i].espaco - qtd[0].qtd;
 
-
-    //for each value in values_db, get the nome local of the origem and destino
-    for (let i = 0; i < values_db.length; i++) {
-        let values_db = utils.getQuery(sql, params[i]);
-        values_db[i].origem = utils.getNomeLocal(values_db[i].origem);
-        values_db[i].destino = utils.getNomeLocal(values_db[i].destino);
+        //get localizacao as a string
+        sql = "SELECT * FROM LOCALIZACAO WHERE id = ?";
+        caronas[i].origem_nome = await utils.getNomeLocal(caronas[i].origem);
+        caronas[i].destino_nome =await  utils.getNomeLocal(caronas[i].destino);
+        
+   
+        //get condutor 
+        sql = "SELECT * FROM USUARIO WHERE id = ?";
+        values = [caronas[i].condutor];
+        var condutor = await utils.getQuery(sql, values);
+        caronas[i].condutor = condutor[0];
+        
+        //get veiculo from carona
+        sql = "SELECT * FROM VEICULO_CARONA WHERE id = ?";
+        values = [caronas[i].veiculocarona];
+        var veiculo = await utils.getQuery(sql, values);
+        caronas[i].veiculo = veiculo[0];
+        caronas_retorno.push(caronas[i]);
     }
-    res.json(values_db);
 
-    return res.json(values_db);
+    
+    return  res.json(caronas_retorno);
+
 
 }
 

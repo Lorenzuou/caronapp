@@ -5,8 +5,7 @@ db = require('./db.js');
 
 async function getQuery(sql, params) {
     try {
-        console.log(params);
-        console.log(sql)
+      
         let values_db = await db.query(sql, params, function (err, result) {
             if (err) throw err;
             console.log(result);
@@ -33,23 +32,23 @@ async function insertDB(sql, params) {
     }
 }
 
-function getNomeLocal(id_local,id_cidade,id_estado){ 
+async function getNomeLocal(id_local){ 
     
     //query on table LOCALIZACAO to get the nome of the local
-    let sql = "SELECT * FROM LOCALIZACAO WHERE id_local = ?";
-    let local = getQuery(sql,id_local  );
+    let sql = "SELECT * FROM LOCALIZACAO WHERE id = ?";
+    let local = await getQuery(sql,[id_local]  );
+    
 
     //query on table CIDADE to get the nome of the cidade
-    sql = "SELECT * FROM CIDADE WHERE id_cidade = ?";
+    sql = "SELECT * FROM CIDADE WHERE id = ?";
     
-    let cidade = getQuery(sql,id_cidade  );
+    let cidade = await getQuery(sql,[local[0].cidade] );
 
     //query on table ESTADO to get the nome of the estado
-    sql = "SELECT * FROM ESTADO WHERE id_estado = ?";
-    let estado = getQuery(sql,id_estado  );
+    sql = "SELECT * FROM ESTADO WHERE id = ?";
+    let estado =  await getQuery(sql,[cidade[0].uf]  );
 
-    // concat all the nomes
-    return local.nome + ", " + cidade.nome + ", " + estado.nome;
+    return local[0].nome + ", " + cidade[0].nome + ", " + estado[0].nome;
 }
 
 
