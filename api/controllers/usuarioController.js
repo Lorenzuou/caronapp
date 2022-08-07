@@ -62,8 +62,8 @@ async function singup(req, res) {
   //handle error
 
   try {
-    var sql = "INSERT INTO USUARIO (nome, email,cpf, senha, sexo,telefone) VALUES (?, ?,?, ?, ?,?)";
-    var values = [req.body.nome, req.body.email, req.body.cpf, req.body.senha, req.body.sexo, req.body.telefone];
+    var sql = "INSERT INTO USUARIO (nome, email,cpf, senha, sexo,telefone) VALUES (?, ?,?, ?, ?,?,?)";
+    var values = [req.body.nome, req.body.email, req.body.cpf, req.body.senha, req.body.sexo, req.body.telefone, req.body.foto == null ? null : req.body.foto];
 
     //TODO: verificação de senha e outros campos 
 
@@ -71,7 +71,6 @@ async function singup(req, res) {
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(req.body.senha, salt);
     values[3] = hash;
-    console.log(values)
     db.query(sql, values, function (err, result) {
       if (err) throw err;
       else res.json({ 'message': 'Usuário cadastrado com sucesso!', 'usuarioCriado': values[0] });
@@ -143,7 +142,7 @@ async function getByEmail(req, res) {
 
 }
 
-async function deleteUSUARIO(req, res) {
+async function deleteUsuario(req, res) {
   //create request route for delete a USUARIO
   var sql = "DELETE FROM USUARIO WHERE id = ?";
   var values = [req.params.id];
@@ -297,7 +296,7 @@ async function getVeiculosUsuario(req, res) {
 module.exports = {
   singup,
   login,
-  deleteUSUARIO,
+  deleteUsuario,
   getByEmail,
   updateUSUARIO,
   getAllUSUARIOs,

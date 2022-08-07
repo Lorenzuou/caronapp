@@ -1,6 +1,4 @@
 
-//request veiculo controller 
-const veiculoController = require('./veiculoController');
 //create post route that adds a new carona to the database
 const db = require('../services/db.js');
 
@@ -45,11 +43,6 @@ async function addCarona(req, res) {
     sql = "INSERT INTO CARONA (origem,destino,datainicio,espaco,valor,veiculocarona,grupo,obs,condutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     values = [req.body.origem, req.body.destino, req.body.data, req.body.espaco, req.body.valor, id_veiculo_carona, (req.body.grupo == null ? null : req.body.grupo)  ,  (req.body.obs == null ?  null : req.body.obs), req.body.condutor];
     
-
-
-    // // values = [veiculo.ano, veiculo.cor, veiculo.placa, veiculo.renavam];
-    console.log(values);
-
     utils.insertDB(sql, values).then(function (result) {
         res.json(result);
 

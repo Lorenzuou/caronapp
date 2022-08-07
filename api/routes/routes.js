@@ -80,6 +80,11 @@ router.get('/getGrupos', grupoController.getGrupos);
 
 router.get('/getGrupoById', grupoController.getGrupoById);
 
+router.post('/addGrupoUsuarioById', grupoController.addGrupoUsuarioById);
+
+router.post('/addGrupoUsuarioByCodigo', grupoController.addGrupoUsuarioByCodigo);
+
+router.post('/getGruposUsuario', grupoController.getGruposUsuario);
 
 
 

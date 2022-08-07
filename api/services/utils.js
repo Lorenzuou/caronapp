@@ -48,7 +48,7 @@ async function getNomeLocal(id_local){
     sql = "SELECT * FROM ESTADO WHERE id = ?";
     let estado =  await getQuery(sql,[cidade[0].uf]  );
 
-    return local[0].nome + ", " + cidade[0].nome + ", " + estado[0].nome;
+    return local[0].local + ", " + cidade[0].nome + ", " + estado[0].nome;
 }
 
 
