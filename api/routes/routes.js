@@ -32,6 +32,7 @@ router.post('/getFotoUsuario',usuarioController.getFotoUsuario);
 
 router.post('/addDocumentacaoUsuario',usuarioController.addDocumentacaoUsuario);
 
+router.post('/getUsuarioById',usuarioController.getUsuarioById);
 
 
 
@@ -59,6 +60,10 @@ router.post('/iniciarCarona', caronaController.iniciarCarona);
 
 router.post('/getCaronaById', caronaController.getCaronaById);
 
+router.post('/iniciarCarona', caronaController.iniciarCarona);
+
+router.post('/finalizarCarona', caronaController.finalizarCarona);
+
 
 //Veiculo routes
 
@@ -66,6 +71,11 @@ router.post('/addVeiculoUsuario', veiculoController.addVeiculoUsuario);
 
 router.post('/getVeiculoCarona', veiculoController.getVeiculoCarona);
 
+router.post('/getVeiculo', veiculoController.getVeiculo);
+
+router.post('/getVeiculoUsuario', veiculoController.getVeiculoUsuario);
+
+router.post('/getVeiculos', veiculoController.getVeiculos);
 
 
 

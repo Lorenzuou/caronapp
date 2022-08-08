@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const utils = require('../services/utils.js');
+const { util } = require('config');
 
 
 
@@ -46,9 +47,9 @@ async function login(req, res) {
 
 async function logOut(req, res) {
   // revoke token from body
-  
-  
-} 
+
+
+}
 
 
 
@@ -85,12 +86,18 @@ async function singup(req, res) {
 }
 
 
-async function getUserById(req, res) {
+async function getUsuarioById(req, res) {
   //create request route for get a USUARIO
   var sql = "SELECT * FROM USUARIO WHERE id = ?";
-  var values = req.params.id;
+  var values = [req.body.id];
   utils.getQuery(sql, values).then(function (result) {
+    if(result.length > 0){
     res.json(result);
+    } else {
+      res.json({'error':'Usuário não encontrado'});
+    }
+
+    
   });
 }
 
@@ -100,8 +107,14 @@ async function getFotoUsuario(req, res) {
   let values = [req.body.id];
   utils.getQuery(sql, values).then(function (result) {
     //convert result to base64
-    var base64 = Buffer.from(result[0].foto).toString('base64');
-    res.json({ "foto": base64 });
+    if(result.length > 0){
+     
+      let base64 = utils.getFoto(result[0].foto);
+      res.json({ "foto": base64 });
+    } else {
+      res.json({ "foto": null });
+    }
+
   });
 }
 
@@ -138,7 +151,7 @@ async function getByEmail(req, res) {
     res.json(result);
   });
 
- 
+
 
 }
 
@@ -185,24 +198,20 @@ async function avaliar(id_usuario, avaliacao) {
   let values = [id_usuario];
   try {
     values_db = await db.query(sql, values, function (err, result) {
-      if (err) throw res.status(500).send('Erro ao buscar nota da pessa');
-      console.log(result);
     });
-    nota_nova = req.body.nota;
-
+    nota_nova = avaliacao;
+    console.log(values_db[0].nota);
     num_avaliacoes = values_db[0].num_avaliacoes + 1;
-    nota_atualizada = (nota_nova + values_db[0].nota) / num_avaliacoes;
+    nota_atualizada = (nota_nova + values_db[0].nota) / 2;
+    console.log(nota_atualizada)
   } catch (err) {
     console.log(err);
-    return res.status(500).send('Erro ao realizar busca');
+    return 'Erro ao realizar busca';
   }
-
   sql = "UPDATE USUARIO SET nota = ?, num_avaliacoes = ? WHERE id = ?";
 
-  values = [nota_atualizada, num_avaliacoes, req.body.id];
-  utils.getQuery(sql, values).then(function (result) {
-    res.json(result);
-  });
+  values = [nota_atualizada, num_avaliacoes, id_usuario];
+  utils.getQuery(sql, values)//seta o valor da nota nova no banco de dados
 
 
 
@@ -215,7 +224,7 @@ async function getNota(req, res) {
   utils.getQuery(sql, values).then(function (result) {
     res.json(result);
   });
-  
+
 
 }
 
@@ -224,37 +233,37 @@ async function getNota(req, res) {
 
 async function avaliarUsuariosCarona(req, res) {
   //update nota from USUARIO
-
   for (e of req.body.avaliacoes) {
     //select usuario and update nota
-    avaliar(e.id_usuario, e.avaliacao);
-    let sql = "SELECT * CARONA_USUARIO WHERE id_usuario = ? AND id_carona = ?";
-    let values = [e.id_usuario, e.id_carona];
-    values_db = utils.getQuery(sql, values);
-    if (values_db.length == 0) {
+    avaliar(e.usuario_id, e.avaliacao);
+    let sql = "SELECT * FROM CARONA_USUARIO WHERE usuario_id = ? AND carona_id = ?";
+    let values = [e.usuario_id, req.body.carona_id];
+    values_db = await utils.getQuery(sql, values);
+    console.log("values_db")
+    console.log(values_db);
+    if (values_db.length > 0) {
       //insert carona_usuario
-      sql = "INSERT INTO CARONA_USUARIO_AVALIACAO (id, nota,comentario) VALUES (?, ?, ?)";
+      sql = "INSERT INTO CARONA_USUARIO_AVALIACAO (carona_usuario_id, nota,comentario) VALUES (?, ?, ?)";
       values = [values_db[0].id, e.avaliacao, e.observacao];
-      utils.insertDB(sql, values).then(function (result) {
-        res.json(result);
+      console.log(values);
+      await utils.insertDB(sql, values).then(function (result) {
       });
     }
-
-
   }
+  res.json({ "message": "Avaliacao realizada com sucesso" });
 }
 
 async function getAvaliaoesUsuario(req, res) {
   //get nota from USUARIO
-  let sql = "SELECT * FROM CARONA_USUARIO_AVALIACAO WHERE id_usuario = ?";
+  let sql = "SELECT * FROM CARONA_USUARIO_AVALIACAO WHERE usuario_id = ?";
   let values = req.params.id;
   values_db = utils.getQuery(sql, values);
 
-  //for each id_usuario, select nome and foto 
+  //for each usuario_id, select nome and foto 
   let sql2 = "SELECT nome, foto FROM USUARIO WHERE id = ?";
   values_return = [];
   for (e of values_db) {
-    values = [e.id_usuario];
+    values = [e.usuario_id];
     values_db2 = utils.getQuery(sql2, values);
     e.nome = values_db2[0].nome;
     e.foto = values_db2[0].foto;
@@ -276,19 +285,6 @@ async function getVeiculosUsuario(req, res) {
 }
 
 
-// async function addVeiculoUsuario(req, res) {
-  
-//   console.log(req.body);
-//   //add veiculo to USUARIO with all the vehicle info
-//   // let sql = "INSERT INTO VEICULO_USUARIO (usuario_id, marca, modelo, ano, placa, cor, renavam) VALUES (?, ?, ?, ?, ?, ?, ?)";
-//   // let values = [req.body.usuario_id, req.body.marca, req.body.modelo, req.body.ano, req.body.placa, req.body.cor, req.body.renavam];
-//   // console.log(values);
-//   // utils.insertDB(sql, values).then(function (result) {
-//   //   res.json(result);
-//   // });
-
-// }
-
 
 
 
@@ -307,8 +303,8 @@ module.exports = {
   getFotoUsuario,
   addFotoUsuario,
   getVeiculosUsuario,
-  
-  getUserById,
+
+  getUsuarioById,
   addDocumentacaoUsuario
 
 

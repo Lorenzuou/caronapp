@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 require("dotenv").config();
 
 const app = express();
-app.use((express.json({limit: '10mb'})));
+app.use((express.json({limit: '20mb'})));
 const port = process.env.PORT || 8080;
 const routes = require('./api/routes/routes');
 
@@ -19,7 +19,23 @@ const routes = require('./api/routes/routes');
 // app.use(passport.session());
 
 // app.use('./api/configs/login', loginRouter);
+app.listen(port, () => {
+  console.log('Express server listening on port ' + port);
+});
 
+
+
+
+// ngrok = require('ngrok');
+// ngrok.connect({
+//   proto : 'http',
+//   addr : port,
+// }, (err, url) => {
+//   if (err) {
+//       console.error('Error while connecting Ngrok',err);
+//       return new Error('Ngrok Failed');
+//   }
+// });
 
 
 app.use(bodyParser.json());
@@ -37,11 +53,6 @@ app.get('/', (req, res) => {
 
 
 
-
-
-app.listen(port, () => {
-  console.log('Express server listening on port ' + port);
-});
 
 
 

@@ -3,6 +3,17 @@ db = require('./db.js');
 
 
 
+function getFoto(foto){ 
+    // convert foto to base64
+    if(foto != null){
+        let base64 = Buffer.from(foto).toString('base64');
+        return base64;
+    }else{
+        return null;
+    }
+   
+}
+
 async function getQuery(sql, params) {
     try {
       
@@ -55,6 +66,7 @@ async function getNomeLocal(id_local){
 module.exports = {
     getNomeLocal,
     getQuery, 
-    insertDB
+    insertDB, 
+    getFoto
     
 }

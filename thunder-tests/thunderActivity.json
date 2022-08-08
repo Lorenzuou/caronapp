@@ -1,0 +1,135 @@
+[
+  {
+    "_id": "4c7e43db-4730-4720-b93a-bbe15dc8d08c",
+    "colId": "history",
+    "containerId": "",
+    "name": "avaliarUsuarios",
+    "url": "http://localhost:8080/api/avaliarUsuariosCarona",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2022-08-08T17:04:21.701Z",
+    "modified": "2022-08-08T18:06:30.422Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n\"carona_id\":2 ,\n\"avaliacoes\": [\n  {\n    \"usuario_id\":1, \n    \"avaliacao\":3,\n    \"observacao\":\"Não gostei muito da cara do motorista mas fazer o que né\"\n  }, \n  { \n    \"usuario_id\":2, \n    \"avaliacao\":2,\n    \"observacao\":\"Sei lá, preferia ter ido a pé\"\n  }, \n  { \n    \"usuario_id\":3, \n    \"avaliacao\":5,\n    \"observacao\":\"Motorista simpático se pudesse casaria\"\n  } \n  ]\n\n\n\n} ",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "5d42de68-b044-45ed-9ce5-f74e914079bb",
+    "colId": "history",
+    "containerId": "",
+    "name": "avaliarUsuarios Copy",
+    "url": "http://localhost:8080/api/reservarCarona",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2022-08-08T17:04:21.701Z",
+    "modified": "2022-08-08T17:39:51.477Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"carona_id\":2, \n  \"usuario_id\":4\n} ",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "b2d3aee5-1df5-47fd-89f7-f906dcabdd03",
+    "colId": "history",
+    "containerId": "",
+    "name": "finalizarCarona",
+    "url": "http://localhost:8080/api/finalizarCarona",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2022-08-08T17:04:21.701Z",
+    "modified": "2022-08-08T18:36:14.112Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n\"carona_id\":2\n\n} ",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "af353074-95b3-4f6a-8384-804537855528",
+    "colId": "history",
+    "containerId": "",
+    "name": "getCaronaById",
+    "url": "http://localhost:8080/api/getCaronaById",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2022-08-08T17:04:21.701Z",
+    "modified": "2022-08-08T19:29:56.029Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n\"origem\":1, \n\"destino\":3,\n\"data\":\"2022-07-20\"\n\n\n} ",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "e5402d9a-0dd8-42f4-aae5-b33d8c4fc80f",
+    "colId": "history",
+    "containerId": "",
+    "name": "getVeiculo",
+    "url": "http://localhost:8080/api/getVeiculos",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2022-08-08T17:04:21.701Z",
+    "modified": "2022-08-08T20:09:37.638Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n\"veiculo_id\":5\n\n} ",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "83493fb1-c40e-4f08-8638-3a20c4c8f55b",
+    "colId": "history",
+    "containerId": "",
+    "name": "getCaronas",
+    "url": "http://localhost:8080/api/getCaronas",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2022-08-08T17:04:21.701Z",
+    "modified": "2022-08-08T19:43:52.218Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n\"origem\":1, \n\"destino\":2,\n\"data\":\"2022-07-20\"\n\n\n} ",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "6f87d103-f00f-4f53-93ec-69ddf48ce630",
+    "colId": "history",
+    "containerId": "",
+    "name": "getUsuarioById",
+    "url": "http://localhost:8080/api/getFotoUsuario",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2022-08-08T17:04:21.701Z",
+    "modified": "2022-08-08T19:44:00.757Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n\"id\":2\n} ",
+      "form": []
+    },
+    "tests": []
+  }
+]
