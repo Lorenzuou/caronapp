@@ -8,34 +8,25 @@ app.use((express.json({limit: '20mb'})));
 const port = process.env.PORT || 8080;
 const routes = require('./api/routes/routes');
 
-//autenticação
-// app.use(session({  
-//   secret: '123',//configure um segredo seu aqui,
-//   resave: false,
-//   saveUninitialized: false,
-//   cookie: { maxAge: 30 * 60 * 1000 }//30min
-// }))
-// app.use(passport.initialize());
-// app.use(passport.session());
 
-// app.use('./api/configs/login', loginRouter);
 app.listen(port, () => {
   console.log('Express server listening on port ' + port);
 });
 
 
+// Use as linhas abaixo para deixar o servidor online 
 
+ngrok = require('ngrok');
+ngrok.connect({
+  proto : 'http',
+  addr : port,
+}, (err, url) => {
+  if (err) {
+      console.error('Error while connecting Ngrok',err);
+      return new Error('Ngrok Failed');
+  }
+});
 
-// ngrok = require('ngrok');
-// ngrok.connect({
-//   proto : 'http',
-//   addr : port,
-// }, (err, url) => {
-//   if (err) {
-//       console.error('Error while connecting Ngrok',err);
-//       return new Error('Ngrok Failed');
-//   }
-// });
 
 
 app.use(bodyParser.json());

@@ -12,6 +12,12 @@ const { util } = require('config');
 
 
 
+async function hashIt(word){ 
+  var salt =await  bcrypt.genSaltSync(10);
+  var hash =await bcrypt.hashSync(word, salt);
+  return hash;
+}
+
 
 // create login function
 async function login(req, res) {
@@ -24,22 +30,29 @@ async function login(req, res) {
 
 
     var values_db = await db.query(sql, [req.body.email], function (err, result) {
-      if (err) throw res.status(500).send('Erro ao realizar login 1 ');
+      if (err) throw res.status(500).send({ error: 'Erro ao realizar login 1 ' });
       // console.log(result);
     });
+    if (values_db.length > 0) {
+   
+      
+      if (await bcrypt.compare(req.body.senha, values_db[0].senha)) {
+        var token = jwt.sign({ id: values_db[0].id }, process.env.JWT_KEY, { expiresIn: '1h'});
+        console.log(token);
+        return res.json({ message: "Sucesso na autenticação", id: values_db[0].id, nome: values_db[0].nome, email: values_db[0].email, token: token });
 
-    if (await bcrypt.compare(req.body.senha, values_db[0].senha)) {
-      //create token
-      var token = jwt.sign({ id: values_db[0].id }, process.env.JWT_KEY, { expiresIn: '1h', nome: values_db[0].nome });
-      return res.json({ message: "Sucesso na autenticação", token: token, result: true });
+      }else{ 
+        return res.status(400).send({ error: "Usuário ou senha inválidos" })
+      }
+    } else {
 
 
+      return res.status(400).send({ error: "Usuário ou senha inválidos" });
     }
 
-    return res.json({ message: "Falha na autenticação", result: false });
   } catch (err) {
     console.log(err);
-    return res.status(500).send('Erro ao realizar login 2');
+    return res.status(400).send({ error: "Falha na autenticação" });
   }
 
 }
@@ -56,30 +69,52 @@ async function logOut(req, res) {
 
 
 
-
-async function singup(req, res) {
+async function signup(req, res) {
   //create request route for post a sign up
 
   //handle error
 
   try {
-    var sql = "INSERT INTO USUARIO (nome, email,cpf, senha, sexo,telefone) VALUES (?, ?,?, ?, ?,?,?)";
-    var values = [req.body.nome, req.body.email, req.body.cpf, req.body.senha, req.body.sexo, req.body.telefone, req.body.foto == null ? null : req.body.foto];
+    var sql = "INSERT INTO USUARIO (nome, email,cpf, senha,telefone,foto) VALUES ( ?,?, ?, ?,?,?)";
+    var values = [req.body.nome, req.body.email, req.body.cpf, req.body.senha, req.body.telefone, req.body.foto == null ? null : req.body.foto];
 
-    //TODO: verificação de senha e outros campos 
+    //verify if email already exists
+    var sql_verify = "SELECT * FROM USUARIO WHERE email = ?";
+    var values_verify = [req.body.email];
+    var result_verify = await db.query(sql_verify, values_verify);
+    if (result_verify.length > 0) {
+      return res.status(400).send({ 'error': "Email já cadastrado" });
+    }
+
+
+    //verify if cpf already exists
+    var sql_verify = "SELECT * FROM USUARIO WHERE cpf = ?";
+    var values_verify = [req.body.cpf];
+    var result_verify = await db.query(sql_verify, values_verify);
+    if (result_verify.length > 0) {
+      return res.status(400).send({ 'error': "CPF já cadastrado" });
+    }
+
 
     // encript password
-    var salt = bcrypt.genSaltSync(10);
-    var hash = bcrypt.hashSync(req.body.senha, salt);
+    var hash = await hashIt(req.body.senha);
     values[3] = hash;
-    db.query(sql, values, function (err, result) {
-      if (err) throw err;
-      else res.json({ 'message': 'Usuário cadastrado com sucesso!', 'usuarioCriado': values[0] });
-    }
-    );
-    res.status(201).send('Usuário cadastrado com sucesso!');
 
-  } catch (err) {
+    //insert into db
+    utils.insertDB(sql, values).then(function (result) {
+
+      if (result.error) {
+        return res.status(400).send({ error: "Erro ao cadastrar usuário" });
+      } else {
+
+        res.status(201).send('Usuário cadastrado com sucesso!');
+      } //end else
+
+    });
+  }
+
+
+  catch (err) {
     console.log(err);
     return res.status(500).send('Erro ao realizar cadastro');
   }
@@ -91,13 +126,13 @@ async function getUsuarioById(req, res) {
   var sql = "SELECT * FROM USUARIO WHERE id = ?";
   var values = [req.body.id];
   utils.getQuery(sql, values).then(function (result) {
-    if(result.length > 0){
-    res.json(result);
+    if (result.length > 0) {
+      res.json(result);
     } else {
-      res.json({'error':'Usuário não encontrado'});
+      res.json({ 'error': 'Usuário não encontrado' });
     }
 
-    
+
   });
 }
 
@@ -107,8 +142,8 @@ async function getFotoUsuario(req, res) {
   let values = [req.body.id];
   utils.getQuery(sql, values).then(function (result) {
     //convert result to base64
-    if(result.length > 0){
-     
+    if (result.length > 0) {
+
       let base64 = utils.getFoto(result[0].foto);
       res.json({ "foto": base64 });
     } else {
@@ -188,7 +223,6 @@ async function getAllUSUARIOs(req, res) {
 
 
 
-// TODO: Como avaliar? 
 
 
 async function avaliar(id_usuario, avaliacao) {
@@ -290,7 +324,7 @@ async function getVeiculosUsuario(req, res) {
 
 
 module.exports = {
-  singup,
+  signup,
   login,
   deleteUsuario,
   getByEmail,

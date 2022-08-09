@@ -39,7 +39,7 @@ async function insertDB(sql, params) {
         return values_db;
     } catch (err) {
         console.log(err);
-        return res.json(err);
+        return  {'error': err};
     }
 }
 

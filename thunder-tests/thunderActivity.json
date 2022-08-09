@@ -61,18 +61,18 @@
     "colId": "history",
     "containerId": "",
     "name": "getCaronaById",
-    "url": "http://localhost:8080/api/getCaronaById",
-    "method": "POST",
+    "url": "http://localhost:8080/api/getCaronaByUsuario/2",
+    "method": "GET",
     "sortNum": 0,
     "created": "2022-08-08T17:04:21.701Z",
-    "modified": "2022-08-08T19:29:56.029Z",
-    "headers": [],
+    "modified": "2022-08-09T02:19:34.057Z",
+    "headers": [
+      {
+        "name": "Authorization",
+        "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNjYwMDA5OTY5LCJleHAiOjE2NjAwMTM1Njl9.as7MpJ6yRenYk4peIcZLIwRUvcQpVdDCBEZCvnsvJnE "
+      }
+    ],
     "params": [],
-    "body": {
-      "type": "json",
-      "raw": "{\n\"origem\":1, \n\"destino\":3,\n\"data\":\"2022-07-20\"\n\n\n} ",
-      "form": []
-    },
     "tests": []
   },
   {
@@ -80,16 +80,16 @@
     "colId": "history",
     "containerId": "",
     "name": "getVeiculo",
-    "url": "http://localhost:8080/api/getVeiculos",
+    "url": "http://localhost:8080/api/login",
     "method": "POST",
     "sortNum": 0,
     "created": "2022-08-08T17:04:21.701Z",
-    "modified": "2022-08-08T20:09:37.638Z",
+    "modified": "2022-08-09T01:30:07.710Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n\"veiculo_id\":5\n\n} ",
+      "raw": "{\n\"email\":\"bone@email.com\",\n\"senha\":\"3\"\n} ",
       "form": []
     },
     "tests": []
@@ -128,6 +128,25 @@
     "body": {
       "type": "json",
       "raw": "{\n\"id\":2\n} ",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "9768aa65-3f85-40b1-a27f-17598a755553",
+    "colId": "history",
+    "containerId": "",
+    "name": "getVeiculo Copy",
+    "url": "http://localhost:8080/api/signup",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2022-08-08T17:04:21.701Z",
+    "modified": "2022-08-09T01:35:21.000Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"cpf\": \"12312312312\",\n    \"nome\": \"Bob Esponja\",\n    \"email\": \"bone@email.com\",\n    \"senha\": \"bone\",\n    \"telefone\":\"123\"\n    \n}",
       "form": []
     },
     "tests": []

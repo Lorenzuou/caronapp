@@ -9,7 +9,6 @@ CREATE TABLE `USUARIO` (
 	`cpf` VARCHAR(20) NOT NULL,
     `nome` VARCHAR(100) NOT NULL,
     `email` VARCHAR(100) NOT NULL,
-    `sexo` VARCHAR(1) NOT NULL,
 	`telefone` VARCHAR(14) NOT NULL,
 	`senha` VARCHAR(200) NOT NULL,
 	`cnh` VARCHAR(30),

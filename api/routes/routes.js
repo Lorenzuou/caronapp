@@ -15,7 +15,7 @@ const login = require('../middleware/login');
 
 //TODO: Colocar autenticação em todas as funções privadas
 
-router.post('/singup', usuarioController.singup);
+router.post('/signup', usuarioController.signup);
 
 router.post('/login', usuarioController.login);
 
@@ -36,7 +36,7 @@ router.post('/getUsuarioById',usuarioController.getUsuarioById);
 
 
 
-// //Carona routes
+//Carona routes
 
 // // router.post('/addCarona',login.required, caronaController.addCarona);
 router.post('/addCarona', caronaController.addCarona);
@@ -55,14 +55,15 @@ router.post('/getCaronasOrigem', caronaController.getCaronasOrigem);
 
 router.post('/reservarCarona', caronaController.reservarCarona);
 
-
-router.post('/iniciarCarona', caronaController.iniciarCarona);
-
 router.post('/getCaronaById', caronaController.getCaronaById);
 
 router.post('/iniciarCarona', caronaController.iniciarCarona);
 
 router.post('/finalizarCarona', caronaController.finalizarCarona);
+
+router.get('/getCaronasByUsuario/:usuario_id', caronaController.getCaronasByUsuario);
+
+router.get('/getCaronasByGrupo/:grupo_id', caronaController.getCaronasByGrupo);
 
 
 //Veiculo routes
@@ -86,7 +87,7 @@ router.post('/getVeiculos', veiculoController.getVeiculos);
 
 router.post('/addGrupo', grupoController.addGrupo);
 
-router.get('/getGrupos', grupoController.getGrupos);
+router.get('/getGrupos',login.required, grupoController.getGrupos);
 
 router.get('/getGrupoById', grupoController.getGrupoById);
 
@@ -94,7 +95,7 @@ router.post('/addGrupoUsuarioById', grupoController.addGrupoUsuarioById);
 
 router.post('/addGrupoUsuarioByCodigo', grupoController.addGrupoUsuarioByCodigo);
 
-router.post('/getGruposUsuario', grupoController.getGruposUsuario);
+router.get('/getGruposUsuario/:usuario_id', grupoController.getGruposUsuario);
 
 
 

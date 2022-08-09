@@ -12,7 +12,7 @@ async function addVeiculoUsuario(req, res) {
     var values = [req.body.veiculo_id,req.body.placa, req.body.ano, req.body.cor, req.body.renavam, req.body.usuario_id];
     console.log(values);
     utils.insertDB(sql, values).then(function (result) {
-        res.json(result);
+        res.status(400).send(result);
     });
 }
 
@@ -30,7 +30,7 @@ async function getVeiculos(req, res) {
     if(veiculos.length > 0) {
         res.json(veiculos);
     } else {
-        res.json({"error": "Veiculo não encontrado"});
+        res.status(400).send({"error": "Veiculo não encontrado"});
     };
 }
 
@@ -50,7 +50,7 @@ async function getVeiculo(req, res) {
     if(veiculo.length > 0) {
         res.json(veiculo[0]);
     } else {
-        res.json({"error": "Veiculo não encontrado"});
+        res.status(400).send({"error": "Veiculo não encontrado"});
     }
 
 } 
@@ -64,7 +64,7 @@ async function getVeiculoCarona(req, res) {
     if(veiculo.length > 0) {
         res.json(veiculo[0]);
     } else {
-        res.json({"error": "Veiculo não encontrado"});
+        res.status(400).send({"error": "Veiculo não encontrado"});
     };
 }
 
@@ -76,7 +76,7 @@ async function getVeiculoUsuario(req, res) {
     if(veiculo.length > 0) {
         res.json(veiculo[0]);
     } else {
-        res.json({"error": "Veiculo não encontrado"});
+        res.status(400).send({"error": "Veiculo não encontrado"});
     };
 
 }; 

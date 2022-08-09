@@ -45,15 +45,19 @@ async function addGrupoUsuarioByCodigo(req, res) {
 async function getGrupos(req, res) {
     var sql = "SELECT * FROM GRUPO";
     let values = [];
-    let values_db = utils.getQuery(sql, values);
+    let values_db = await utils.getQuery(sql, values);
+
+
     res.json(values_db);
 }
 
 async function getGruposUsuario(req, res) {
     var sql = "SELECT * FROM GRUPO_USUARIO WHERE usuario_id = ?";
-    let values = [req.body.usuario];
+    
+
+    
+    let values = [req.params.usuario_id];
     let values_db = await utils.getQuery(sql, values);
-    console.log(values_db);
 
     var sql2 = "SELECT * FROM GRUPO WHERE id = ?";
     let grupos = [];
@@ -62,12 +66,8 @@ async function getGruposUsuario(req, res) {
         let grupo = await utils.getQuery(sql2, values2);
         grupos.push(grupo[0]);
     }
-    retorno = {
-        grupos: grupos
-    }
-
-
-    res.json(retorno);
+   
+    res.json(grupos);
 }
 
 
