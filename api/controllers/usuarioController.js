@@ -8,13 +8,14 @@ const jwt = require('jsonwebtoken');
 
 const utils = require('../services/utils.js');
 const { util } = require('config');
+const e = require('express');
 
 
 
 
-async function hashIt(word){ 
-  var salt =await  bcrypt.genSaltSync(10);
-  var hash =await bcrypt.hashSync(word, salt);
+async function hashIt(word) {
+  var salt = await bcrypt.genSaltSync(10);
+  var hash = await bcrypt.hashSync(word, salt);
   return hash;
 }
 
@@ -34,14 +35,14 @@ async function login(req, res) {
       // console.log(result);
     });
     if (values_db.length > 0) {
-   
-      
+
+
       if (await bcrypt.compare(req.body.senha, values_db[0].senha)) {
-        var token = jwt.sign({ id: values_db[0].id }, process.env.JWT_KEY, { expiresIn: '1h'});
+        var token = jwt.sign({ id: values_db[0].id }, process.env.JWT_KEY, { expiresIn: '1h' });
         console.log(token);
         return res.json({ message: "Sucesso na autenticação", id: values_db[0].id, nome: values_db[0].nome, email: values_db[0].email, token: token });
 
-      }else{ 
+      } else {
         return res.status(400).send({ error: "Usuário ou senha inválidos" })
       }
     } else {
@@ -124,12 +125,14 @@ async function signup(req, res) {
 async function getUsuarioById(req, res) {
   //create request route for get a USUARIO
   var sql = "SELECT * FROM USUARIO WHERE id = ?";
-  var values = [req.body.id];
+
+  let usuario_id = await utils.getIdUsuarioToken(req);
+  let values = [usuario_id];
   utils.getQuery(sql, values).then(function (result) {
     if (result.length > 0) {
       res.json(result);
     } else {
-      res.json({ 'error': 'Usuário não encontrado' });
+      res.status(400).send({ 'error': 'Usuário não encontrado' });
     }
 
 
@@ -139,8 +142,8 @@ async function getUsuarioById(req, res) {
 async function getFotoUsuario(req, res) {
   //get foto from USUARIO
   let sql = "SELECT foto FROM USUARIO WHERE id = ?";
-  let values = [req.body.id];
-  utils.getQuery(sql, values).then(function (result) {
+  let usuario_id = await utils.getIdUsuarioToken(req);
+  utils.getQuery(sql, usuario_id).then(function (result) {
     //convert result to base64
     if (result.length > 0) {
 
@@ -162,6 +165,9 @@ async function addFotoUsuario(req, res) {
   let values = [req.body.foto, req.body.id];
 
   //convert req.body.foto to Blob format
+  let foto = utils.getFoto(req.body.foto);
+  values[0] = foto;
+
   utils.insertDB(sql, values).then(function (result) {
     res.json(result);
   });
@@ -170,8 +176,9 @@ async function addFotoUsuario(req, res) {
 
 async function addDocumentacaoUsuario(req, res) {
   // UPDATE USUARIO seting documentacao
-  let sql = "UPDATE USUARIO SET documentacao = ? WHERE id = ?";
-  let values = [req.body.documentacao, req.params.id];
+  let usuario = utils.getIdUsuarioToken(req);
+  let sql = "UPDATE USUARIO SET cnh = ? WHERE id = ?";
+  let values = [req.body.cnh, usuario];
   utils.insertDB(sql, values).then(function (result) {
     res.json(result);
   });
@@ -254,7 +261,7 @@ async function avaliar(id_usuario, avaliacao) {
 async function getNota(req, res) {
   //get nota from USUARIO
   let sql = "SELECT nota FROM USUARIO WHERE id = ?";
-  let values = req.params.id;
+  let values = req.params.usuario_id;
   utils.getQuery(sql, values).then(function (result) {
     res.json(result);
   });
@@ -290,15 +297,15 @@ async function avaliarUsuariosCarona(req, res) {
 async function getAvaliaoesUsuario(req, res) {
   //get nota from USUARIO
   let sql = "SELECT * FROM CARONA_USUARIO_AVALIACAO WHERE usuario_id = ?";
-  let values = req.params.id;
-  values_db = utils.getQuery(sql, values);
+  let values = req.params.usuario_id;
+  let values_db = await utils.getQuery(sql, values);
 
   //for each usuario_id, select nome and foto 
   let sql2 = "SELECT nome, foto FROM USUARIO WHERE id = ?";
   values_return = [];
   for (e of values_db) {
     values = [e.usuario_id];
-    values_db2 = utils.getQuery(sql2, values);
+    values_db2 = await utils.getQuery(sql2, values);
     e.nome = values_db2[0].nome;
     e.foto = values_db2[0].foto;
     values_return.push(e);
@@ -310,12 +317,50 @@ async function getAvaliaoesUsuario(req, res) {
 
 
 async function getVeiculosUsuario(req, res) {
-  //get veiculos from USUARIO from VEICULO_USUARIO table
-  let sql = "SELECT * FROM VEICULO_USUARIO WHERE usuario_id = ?";
-  let values = req.body.id;
-  utils.getQuery(sql, values).then(function (result) {
-    res.json(result);
-  });
+  let usuario = await utils.getIdUsuarioToken(req);
+  if(usuario == null){
+    res.status(400).send({ "error": "Usuario nao encontrado" });
+  }
+
+
+  //checking if usuario has the car on the database
+  var sql = "SELECT * FROM VEICULO_USUARIO WHERE  usuario_id = ?";
+  let params = [usuario];
+
+
+  let veiculos = await utils.getQuery(sql, params);
+
+
+
+
+  if (veiculos.length > 0) {
+    let veiculos_lista = [];
+
+    console.log(veiculos);
+
+    for (veiculo of veiculos) {
+      console.log(veiculo);
+      var sql = "SELECT * FROM VEICULO WHERE id = ?";
+      params = [veiculo.veiculo];
+      let veiculo_origem = await utils.getQuery(sql, params);
+      veiculo.foto = utils.getFoto(veiculo_origem[0].foto);
+      veiculo.marca = veiculo_origem[0].marca;
+      veiculo.modelo = veiculo_origem[0].nome;
+      veiculo.espaco  = veiculo_origem[0].capacidade;
+      veiculos_lista.push(veiculo);
+    } 
+    
+
+    if (veiculos.error) {
+      res.status(400).send({ "error": veiculos.error });
+    } else {
+      res.json(veiculos_lista);
+    }
+
+
+  }else{
+    res.send([]);
+  }
 }
 
 
@@ -337,7 +382,6 @@ module.exports = {
   getFotoUsuario,
   addFotoUsuario,
   getVeiculosUsuario,
-
   getUsuarioById,
   addDocumentacaoUsuario
 

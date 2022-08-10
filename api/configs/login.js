@@ -9,7 +9,6 @@ exports.required = (req, res, next) => {
         req.user = decode;
         next();
     } catch (error) {
-        console.log(req.body.token);
         return res.status(401).send({ mensagem: 'Falha na autenticação' });
     }
 

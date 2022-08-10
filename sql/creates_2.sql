@@ -30,7 +30,8 @@ CREATE TABLE `CARONA` (
 	`veiculocarona` INT NOT NULL,
 	`espaco` INT NOT NULL,
 	`obs` TEXT(500),
-	`datainicio` DATETIME NOT NULL,
+	`data` DATETIME NOT NULL,
+    `datainicio` DATETIME ,
 	`datafim` DATETIME ,
 	`grupo` INT,
     `condutor` INT NOT NULL,
@@ -113,7 +114,7 @@ CREATE TABLE VEICULO(
     `nome` VARCHAR(50) NOT NULL,
     `tipo` VARCHAR(50) ,
     `capacidade` INT NOT NULL,
-    `foto` MEDIUMBLOB,
+    `foto` VARCHAR(200) ,
     PRIMARY KEY (`id`)
 );
 

@@ -32,7 +32,7 @@ async function addGrupoUsuarioByCodigo(req, res) {
     var sql = "SELECT id FROM GRUPO WHERE codigo = ?";
     let values = [req.body.codigo];
     let values_db = await utils.getQuery(sql, values);
-    
+
 
     var sql2 = "INSERT INTO GRUPO_USUARIO (grupo_id,usuario_id) VALUES (?,?)";
     let values2 = [values_db[0].id, req.body.usuario];
@@ -53,11 +53,15 @@ async function getGrupos(req, res) {
 
 async function getGruposUsuario(req, res) {
     var sql = "SELECT * FROM GRUPO_USUARIO WHERE usuario_id = ?";
-    
+    let usuario =  await utils.getIdUsuarioToken(req);
 
-    
-    let values = [req.params.usuario_id];
+
+    let values = [usuario];
     let values_db = await utils.getQuery(sql, values);
+
+    if(values_db.error){
+        return res.status(400).send({ "error": "Usuario nao encontrado" });
+    }
 
     var sql2 = "SELECT * FROM GRUPO WHERE id = ?";
     let grupos = [];
@@ -66,7 +70,8 @@ async function getGruposUsuario(req, res) {
         let grupo = await utils.getQuery(sql2, values2);
         grupos.push(grupo[0]);
     }
-   
+
+
     res.json(grupos);
 }
 
@@ -74,18 +79,26 @@ async function getGruposUsuario(req, res) {
 async function getGrupoById(req, res) {
 
     var sql = "SELECT * FROM GRUPO WHERE id = ?";
-    let values = [req.body.id];
+    let values = [req.params.grupo_id];
     let values_db = await utils.getQuery(sql, values);
 
     //get list of caronas from GRUPO_CARONA table
     var sql2 = "SELECT * FROM CARONA WHERE grupo = ?";
 
     let caronas = await utils.getQuery(sql2, values);
-    retorno = {
-        grupo: values_db[0],
-        caronas: caronas
+    if (caronas.error) {
+        return res.status(400).send(caronas);
+    } else {
+        retorno = {
+            grupo: values_db[0],
+            caronas: caronas
+        }
+        res.json(retorno);
     }
-    res.json(retorno);
+
+
+
+
 }
 
 

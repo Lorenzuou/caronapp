@@ -1,8 +1,11 @@
 
 //create post route that adds a new carona to the database
+const { util } = require('config');
 const db = require('../services/db.js');
 
 let utils = require('../services/utils.js');
+
+
 
 
 
@@ -16,6 +19,39 @@ async function updateCarona(values) {
     });
 }
 
+
+async function getLocalizacao(req, res) {
+    var sql = "SELECT * FROM LOCALIZACAO WHERE local LIKE ?";
+
+
+    if (req.params.local != null) {
+
+        local = req.params.local.toUpperCase();
+        local = "%" + local + "%";
+        let values = await utils.getQuery(sql, [local]);
+
+        if (values.length > 0) {
+            local_lista = [];
+
+            for (let i = 0; i < values.length; i++) {
+                local = await utils.getObjetoLocal(values[i].id);
+                local_lista.push(local);
+            }
+            res.json(local_lista);
+        } else {
+            res.json([]);
+        }
+
+
+    } else {
+        res.json([]);
+    }
+
+
+
+
+
+}
 
 
 async function addVeiculoCarona(veiculo) {
@@ -32,28 +68,35 @@ async function addVeiculoCarona(veiculo) {
 
 async function addCarona(req, res) {
 
+    //get usuario id from token 
+    let usuario_id = await utils.getIdUsuarioToken(req);
+
     //select the veiculo with the id of the veiculo from VEICULO_CARONA
     let sql = "SELECT * FROM VEICULO_USUARIO WHERE id = ?";
     let values = [req.body.veiculo];
     let veiculo = await utils.getQuery(sql, values);
     let id_veiculo_carona = await addVeiculoCarona(veiculo[0]);
-    console.log(id_veiculo_carona)
+
     //if grupo == null
 
-    sql = "INSERT INTO CARONA (origem,destino,datainicio,espaco,valor,veiculocarona,grupo,obs,condutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    values = [req.body.origem, req.body.destino, req.body.data, req.body.espaco, req.body.valor, id_veiculo_carona, (req.body.grupo == null ? null : req.body.grupo), (req.body.obs == null ? null : req.body.obs), req.body.condutor];
+    sql = "INSERT INTO CARONA (origem,destino,data,espaco,valor,veiculocarona,grupo,obs,condutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    values = [req.body.origem, req.body.destino, req.body.data, req.body.espaco, req.body.valor, id_veiculo_carona, (req.body.grupo == null ? null : req.body.grupo), (req.body.obs == null ? null : req.body.obs), usuario_id];
 
 
 
 
 
     utils.insertDB(sql, values).then(function (result) {
-
-        //insert condutor into the carona_usuario table
-        sql = "INSERT INTO CARONA_USUARIO (carona_id,usuario_id) VALUES (?, ?)";
-        values = [result.insertId, req.body.condutor];
-        utils.insertDB(sql, values);
-        res.json(result);
+        if (result.error) {
+            return res.status(400).send({ error: "erro ao inserir carona  " });
+        } else {
+            //insert condutor into the carona_usuario table
+            sql = "INSERT INTO CARONA_USUARIO (carona_id,usuario_id) VALUES (?, ?)";
+            
+            values = [result.insertId,usuario_id];
+            utils.insertDB(sql, values);
+            res.json(result);
+        }
 
     });
 
@@ -106,7 +149,7 @@ async function getCaronas(req, res) {
         values = [caronas[i].id];
         var qtd = await utils.getQuery(sql, values);
         caronas[i].espaco = caronas[i].espaco - qtd[0].qtd;
-    
+
 
         //get localizacao as a string
         sql = "SELECT * FROM LOCALIZACAO WHERE id = ?";
@@ -140,11 +183,28 @@ async function getCaronasByUsuario(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM CARONA_USUARIO WHERE usuario_id = ?";
     var values = [req.params.usuario_id];
-    utils.insertDB(sql, values).then(function (result) {
+    utils.insertDB(sql, values).then(async function (result) {
         if (result.error) {
             return res.status(400).send(result);
         } else {
-            res.json(result);
+
+            //for each carona_id, get carona
+            let caronas = [];
+            for (let i = 0; i < result.length; i++) {
+                sql = "SELECT * FROM CARONA WHERE id = ?";
+                values = [result[i].carona_id];
+                let carona = await utils.getQuery(sql, values);
+                //get localizacao as a string
+                sql = "SELECT * FROM LOCALIZACAO WHERE id = ?";
+                carona[0].origem = await utils.getObjetoLocal(carona[0].origem);
+                carona[0].destino = await utils.getObjetoLocal(carona[0].destino);
+                //get condutor
+                sql = "SELECT * FROM USUARIO WHERE id = ?";
+
+                caronas.push(carona[0]);
+            }
+
+            res.json(caronas);
         }
     });
 }
@@ -153,7 +213,7 @@ async function getCaronasByUsuario(req, res) {
 async function getCaronasByGrupo(req, res) {
     //create request route for get all caronas
     var sql = "SELECT * FROM CARONA WHERE grupo = ?";
-    var values = [req.params.id];
+    var values = [req.params.grupo_id];
     utils.insertDB(sql, values).then(function (result) {
         if (result.error) {
             return res.status(400).send(result);
@@ -206,30 +266,52 @@ async function getCaronasOrigem(req, res) {
 
 async function getCaronaById(req, res) {
     //create request route for get all caronas
+
+    let usuario = utils.getIdUsuarioToken(req);
+    if (usuario == null) {
+        return res.status(400).send({ error: true, message: "Usuário não encontrado" });
+    }
+
     var sql = "SELECT * FROM CARONA WHERE id = ?";
-    params = [req.body.carona_id];
+    params = [req.params.carona_id];
     console.log(params);
     values_db = await utils.getQuery(sql, params);
     //if result.error is true then the carona is not found
     if (result.error) {
-        return res.status(400).send({"error":"Carona não encontrada"});
+        return res.status(400).send({ "error": "Carona não encontrada" });
     }
-    console.log(values_db[0]);
 
-    var sql = "SELECT id,foto,nome,nota,num_avaliacoes FROM USUARIO WHERE id IN (SELECT usuario_id FROM CARONA_USUARIO WHERE carona_id = ?);";
+    var sql = "SELECT id,foto,nome,nota,num_avaliacoes FROM USUARIO WHERE id IN (SELECT usuario_id FROM CARONA_USUARIO WHERE carona_id = ? AND usuario_id != ?);";
+
+    params = [values_db[0].id, values_db[0].condutor];
 
     values_db_2 = await utils.getQuery(sql, params);
+
+    for (let i = 0; i < values_db_2.length; i++) {
+        if (values_db_2[i].foto != null) {
+            values_db_2[i].foto = utils.getFoto(values_db_2[i].foto);
+        }
+    }
+
     values_db[0].pessoas = values_db_2;
 
-    
+
 
 
     //select VEICULO from carona_veiculo where id_carona = id_carona
     var sql = "SELECT * FROM VEICULO_CARONA WHERE id =?";
     params = [values_db[0].veiculocarona];
     console.log(params);
-    values_db_3 = await utils.getQuery(sql, params);
-    values_db[0].veiculo = values_db_3;
+    veiculo_carona = await utils.getQuery(sql, params);
+
+    //get veiculo from VEICULO where id == veiculo_carona.veiculo
+    var sql = "SELECT nome,marca,foto FROM VEICULO WHERE id = ?";
+    params = [veiculo_carona[0].veiculo];
+    veiculo = await utils.getQuery(sql, params);
+
+
+    values_db[0].veiculo = veiculo;
+
 
 
     res.json(values_db);
@@ -259,7 +341,7 @@ async function finalizarCarona(req, res) {
     utils.insertDB(sql, values).then(function (result) {
         res.json(result);
     }).catch(function (err) {
-        res.json(err);
+        res.status(400).send(err);
     });
 
 
@@ -278,7 +360,8 @@ module.exports = {
     getDocumentacaoCondutorCarona,
     reservarCarona,
     iniciarCarona,
-    finalizarCarona
+    finalizarCarona,
+    getLocalizacao
 
 
 

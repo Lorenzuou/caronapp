@@ -20,83 +20,85 @@ router.post('/signup', usuarioController.signup);
 router.post('/login', usuarioController.login);
 
 
-router.post('/avaliar',usuarioController.avaliar);
+// router.post('/avaliar',usuarioController.avaliar);
 
-router.get('/getNota/:id',usuarioController.getNota);
+router.get('/getNota/:usuario_id',login.required,usuarioController.getNota);
 
-router.post('/avaliarUsuariosCarona',usuarioController.avaliarUsuariosCarona);
+router.post('/avaliarUsuariosCarona',login.required,usuarioController.avaliarUsuariosCarona);
 
-router.post('/addFotoUsuario',usuarioController.addFotoUsuario);
+router.post('/addFotoUsuario',login.required,usuarioController.addFotoUsuario);
 
-router.post('/getFotoUsuario',usuarioController.getFotoUsuario);
+router.get('/getFotoUsuario/:usuario_id',login.required,usuarioController.getFotoUsuario);
 
-router.post('/addDocumentacaoUsuario',usuarioController.addDocumentacaoUsuario);
+router.post('/addDocumentacaoUsuario',login.required,usuarioController.addDocumentacaoUsuario);
 
-router.post('/getUsuarioById',usuarioController.getUsuarioById);
+router.get('/getUsuarioById',login.required,usuarioController.getUsuarioById);
 
-
+router.get('/getVeiculosUsuario',login.required,usuarioController.getVeiculosUsuario);
 
 //Carona routes
 
 // // router.post('/addCarona',login.required, caronaController.addCarona);
-router.post('/addCarona', caronaController.addCarona);
+router.post('/addCarona', login.required,caronaController.addCarona);
+
+router.get('/getLocalizacao/:local', login.required,caronaController.getLocalizacao);
+
+router.get('/getLocalizacao/', login.required,caronaController.getLocalizacao);
+
+router.post('/deleteCarona',login.required, caronaController.deleteCarona);
 
 
-router.post('/deleteCarona', caronaController.deleteCarona);
+router.post('/getCaronas',login.required, caronaController.getCaronas);
 
 
-router.post('/getCaronas', caronaController.getCaronas);
+router.post('/getCaronasDestino', login.required,caronaController.getCaronasDestino);
 
 
-router.post('/getCaronasDestino', caronaController.getCaronasDestino);
+router.post('/getCaronasOrigem',login.required, caronaController.getCaronasOrigem);
 
+router.post('/reservarCarona', login.required,caronaController.reservarCarona);
 
-router.post('/getCaronasOrigem', caronaController.getCaronasOrigem);
+router.get('/getCaronaById/:carona_id', login.required,caronaController.getCaronaById);
 
-router.post('/reservarCarona', caronaController.reservarCarona);
+router.post('/iniciarCarona',login.required, caronaController.iniciarCarona);
 
-router.post('/getCaronaById', caronaController.getCaronaById);
+router.post('/finalizarCarona',login.required, caronaController.finalizarCarona);
 
-router.post('/iniciarCarona', caronaController.iniciarCarona);
+router.get('/getCaronasByUsuario/:usuario_id',login.required, caronaController.getCaronasByUsuario);
 
-router.post('/finalizarCarona', caronaController.finalizarCarona);
-
-router.get('/getCaronasByUsuario/:usuario_id', caronaController.getCaronasByUsuario);
-
-router.get('/getCaronasByGrupo/:grupo_id', caronaController.getCaronasByGrupo);
+router.get('/getCaronasByGrupo/:grupo_id', login.required,caronaController.getCaronasByGrupo);
 
 
 //Veiculo routes
 
-router.post('/addVeiculoUsuario', veiculoController.addVeiculoUsuario);
+router.post('/addVeiculoUsuario',login.required, veiculoController.addVeiculoUsuario);
 
-router.post('/getVeiculoCarona', veiculoController.getVeiculoCarona);
+router.get('/getVeiculoCarona/:veiculo_id',login.required, veiculoController.getVeiculoCarona);
 
-router.post('/getVeiculo', veiculoController.getVeiculo);
+router.get('/getVeiculo/:veiculo_id',login.required, veiculoController.getVeiculo);
 
-router.post('/getVeiculoUsuario', veiculoController.getVeiculoUsuario);
+router.get('/getVeiculoUsuario',login.required, veiculoController.getVeiculoUsuario);
 
-router.post('/getVeiculos', veiculoController.getVeiculos);
+router.get('/getVeiculos',login.required, veiculoController.getVeiculos);
 
-
+router.delete('/deleteVeiculoUsuario/:veiculo_id',login.required, veiculoController.deleteVeiculoUsuario);
 
 
 
 
 //grupo routes
 
-router.post('/addGrupo', grupoController.addGrupo);
+router.post('/addGrupo',login.required, grupoController.addGrupo);
 
 router.get('/getGrupos',login.required, grupoController.getGrupos);
 
-router.get('/getGrupoById', grupoController.getGrupoById);
+router.get('/getGrupoById/:grupo_id',login.required, grupoController.getGrupoById);
 
-router.post('/addGrupoUsuarioById', grupoController.addGrupoUsuarioById);
+router.get('/addGrupoUsuarioById',login.required, grupoController.addGrupoUsuarioById);
 
-router.post('/addGrupoUsuarioByCodigo', grupoController.addGrupoUsuarioByCodigo);
+router.post('/addGrupoUsuarioByCodigo',login.required, grupoController.addGrupoUsuarioByCodigo);
 
-router.get('/getGruposUsuario/:usuario_id', grupoController.getGruposUsuario);
-
+router.get('/getGruposUsuario',login.required, grupoController.getGruposUsuario);
 
 
 
