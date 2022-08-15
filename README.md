@@ -1,8 +1,7 @@
 # Caronapp
 > Aplicativo de caronas compartilhadas
 
-[![NPM Version][npm-image]][npm-url]
-[![Downloads Stats][npm-downloads]][npm-url]
+
 
 Caronapp é um aplicativo mobile de caronas compartilhadas. O objetivo principal é que ele apresente uma plataforma que centralize em um ambiente pessoas que têm interesse em compartilhar caronas, seja por questões de praticidade, ou por questões econômicas (contribuição para o combustível da viagem). O aplicativo permite ao usuário que ele ofereça ou participe de caronas, além de poder estar presente em grupos de caronas específicas (localidade, pessoas conhecidas, grupos de confiança). 
 
