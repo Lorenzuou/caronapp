@@ -8,7 +8,7 @@ Caronapp é um aplicativo mobile de caronas compartilhadas. O objetivo principal
 
 ![](header.png)
 
-## Installation
+## Instalação
 
 _Backend:_
 
@@ -20,22 +20,14 @@ npm init
 ```
 Para executar o Backend, é necessário criar um banco de dados Mysql, configurar o acesso para um usuário. Ao criar uma database chamada *Caronapp*, execute, dentro da pasta mysql, o arquivo "create_database.sql" para estabelecer o banco de dados do aplicativo. 
 
-
-    ## Exemplos de uso
+## Exemplos de uso
 
 O seguinte vídeo apresenta a maioria dos casos de uso dentro do aplicativo: 
 
 https://www.youtube.com/watch?v=fDtEl6FDpg0
 
 
-## Development setup
 
-Describe how to install all development dependencies and how to run an automated test-suite of some kind. Potentially do this for multiple platforms.
-
-```sh
-make install
-npm test
-```
 
 
 ## Meta
