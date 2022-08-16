@@ -56,7 +56,7 @@ router.post('/getCaronasDestino', login.required,caronaController.getCaronasDest
 
 router.post('/getCaronasOrigem',login.required, caronaController.getCaronasOrigem);
 
-router.post('/reservarCarona', login.required,caronaController.reservarCarona);
+router.post('/reservarCarona/:carona_id', login.required,caronaController.reservarCarona);
 
 router.get('/getCaronaById/:carona_id', login.required,caronaController.getCaronaById);
 
@@ -64,7 +64,7 @@ router.post('/iniciarCarona',login.required, caronaController.iniciarCarona);
 
 router.post('/finalizarCarona',login.required, caronaController.finalizarCarona);
 
-router.get('/getCaronasByUsuario/:usuario_id',login.required, caronaController.getCaronasByUsuario);
+router.get('/getCaronasByUsuario',login.required, caronaController.getCaronasByUsuario);
 
 router.get('/getCaronasByGrupo/:grupo_id', login.required,caronaController.getCaronasByGrupo);
 
@@ -88,7 +88,7 @@ router.delete('/deleteVeiculoUsuario/:veiculo_id',login.required, veiculoControl
 
 //grupo routes
 
-router.post('/addGrupo',login.required, grupoController.addGrupo);
+router.post('/addGrupo/:nome_grupo',login.required, grupoController.addGrupo);
 
 router.get('/getGrupos',login.required, grupoController.getGrupos);
 
@@ -100,6 +100,7 @@ router.post('/addGrupoUsuarioByCodigo',login.required, grupoController.addGrupoU
 
 router.get('/getGruposUsuario',login.required, grupoController.getGruposUsuario);
 
+router.post('/addGrupoByCodigo/:grupo',login.required, grupoController.addGrupoByCodigo);
 
 
 module.exports = router;

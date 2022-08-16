@@ -11,11 +11,23 @@ let utils = require('../services/utils.js');
 
 
 async function addGrupo(req, res) {
+
+    let usuario = await utils.getIdUsuarioToken(req);
+    if (usuario == null) {
+        res.status(400).send({ "error": "Usuário não encontrado" });
+    }
+
+
     var sql = "INSERT INTO GRUPO (nome,codigo) VALUES (?,?)";
     let uid = new ShortUniqueId({ length: 5 });
     let id = uid.randomUUID();
-    let values = [req.body.nome, id];
-    utils.insertDB(sql, values);
+    let values = [req.params.nome_grupo, id];
+    let retorno = await utils.getQuery(sql, values);
+    //add usuario to GRUPO_USUARIO table
+    var sql2 = "INSERT INTO GRUPO_USUARIO (grupo_id,usuario_id) VALUES (?,?)";
+    let values2 = [retorno.insertId, usuario];
+    utils.insertDB(sql2, values2);
+
     res.json(id);
 }
 
@@ -53,13 +65,13 @@ async function getGrupos(req, res) {
 
 async function getGruposUsuario(req, res) {
     var sql = "SELECT * FROM GRUPO_USUARIO WHERE usuario_id = ?";
-    let usuario =  await utils.getIdUsuarioToken(req);
+    let usuario = await utils.getIdUsuarioToken(req);
 
 
     let values = [usuario];
     let values_db = await utils.getQuery(sql, values);
 
-    if(values_db.error){
+    if (values_db.error) {
         return res.status(400).send({ "error": "Usuario nao encontrado" });
     }
 
@@ -102,6 +114,39 @@ async function getGrupoById(req, res) {
 }
 
 
+async function addGrupoByCodigo(req, res) {
+    let usuario = await utils.getIdUsuarioToken(req);
+    if (usuario == null) {
+        res.status(400).send({ "error": "Usuário não encontrado" });
+    }
+    //get GRUPO where codigo = req.params.codigo
+    var sql = "SELECT * FROM GRUPO WHERE codigo = ?";
+    let values = [req.params.grupo];
+    let values_db = await utils.getQuery(sql, values);
+    if (values_db.length == null || values_db.length == 0) {
+        return res.status(400).send({"error": "Grupo nao encontrado"});
+    }
+    //add usuario to GRUPO_USUARIO table
+
+    
+
+
+    var sql = "INSERT INTO GRUPO_USUARIO (grupo_id,usuario_id) VALUES (?,?)";
+    values = [values_db[0].id, usuario];
+    utils.insertDB(sql, values).then(function (result) {
+        if (result.error) {
+            res.status(400).send({ "error": "Código invalido" });
+
+        } else {
+
+            res.json(result);
+        }
+    }
+    );
+
+
+}
+
 
 
 //exports
@@ -111,7 +156,8 @@ module.exports = {
     getGrupoById,
     addGrupoUsuarioById,
     addGrupoUsuarioByCodigo,
-    getGruposUsuario
+    getGruposUsuario,
+    addGrupoByCodigo
 
 
 }

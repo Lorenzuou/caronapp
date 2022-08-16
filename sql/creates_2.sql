@@ -35,7 +35,7 @@ CREATE TABLE `CARONA` (
 	`datafim` DATETIME ,
 	`grupo` INT,
     `condutor` INT NOT NULL,
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`) 
 );
 
 DROP TABLE IF EXISTS `CARONA_USUARIO`;
@@ -45,7 +45,8 @@ CREATE TABLE `CARONA_USUARIO` (
     `carona_id` INT NOT NULL,
     `usuario_id` INT NOT NULL,
     `tipo` VARCHAR(10)  ,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`), 
+    UNIQUE KEY `unique_carona_usuario` (`carona_id`,`usuario_id`)
 );
 
 
@@ -66,6 +67,7 @@ CREATE TABLE GRUPO(
     `id` INT NOT NULL AUTO_INCREMENT,
     `nome` VARCHAR(50) NOT NULL,
     `codigo` TEXT(500),
+
     PRIMARY KEY (`id`)
 );
 
@@ -75,7 +77,8 @@ CREATE TABLE GRUPO_USUARIO(
     `id` INT NOT NULL AUTO_INCREMENT,
     `grupo_id` INT NOT NULL,
     `usuario_id` INT NOT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `unique_grupo_usuario` (`grupo_id`,`usuario_id`)
 );
 
 

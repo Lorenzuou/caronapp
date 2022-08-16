@@ -39,7 +39,7 @@ async function addVeiculoUsuario(req, res) {
 
 async function getVeiculos(req, res) {
     //create request route for get all caronas
-    var sql = "SELECT marca,nome,tipo,capacidade FROM VEICULO";
+    var sql = "SELECT id,marca,nome,tipo,capacidade FROM VEICULO";
 
     
 

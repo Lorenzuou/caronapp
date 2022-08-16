@@ -84,7 +84,7 @@
     "method": "POST",
     "sortNum": 0,
     "created": "2022-08-08T17:04:21.701Z",
-    "modified": "2022-08-10T13:53:15.341Z",
+    "modified": "2022-08-11T00:18:54.097Z",
     "headers": [
       {
         "name": "authorization",
@@ -94,7 +94,7 @@
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n\"email\":\"gustavo@email.com\",\n\"senha\":\"123\"\n} ",
+      "raw": "{\n\"email\":\"fred@email.com\",\n\"senha\":\"123\"\n} ",
       "form": []
     },
     "tests": []
@@ -108,13 +108,21 @@
     "method": "POST",
     "sortNum": 0,
     "created": "2022-08-08T17:04:21.701Z",
-    "modified": "2022-08-08T19:43:52.218Z",
-    "headers": [],
+    "modified": "2022-08-10T23:29:54.958Z",
+    "headers": [
+      {
+        "name": "Authorization",
+        "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImlhdCI6MTY2MDE3MzY5MywiZXhwIjoxNjYwMTc3MjkzfQ.a8uBOMuYVoahVV1AmHHFt5d5MXBbjSm9m3FEzkCTyGc"
+      }
+    ],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n\"origem\":1, \n\"destino\":2,\n\"data\":\"2022-07-20\"\n\n\n} ",
+      "raw": "{\n\"origem\":3, \n\"destino\":5,\n\"data\":\"2022-08-11T00:00:00.000\"\n\n\n} ",
       "form": []
+    },
+    "auth": {
+      "type": "basic"
     },
     "tests": []
   },
@@ -185,15 +193,15 @@
     "colId": "history",
     "containerId": "",
     "name": "getUsuarioById",
-    "url": "http://localhost:8080/api/getVeiculosUsuario",
+    "url": "http://localhost:8080/api/getCaronasByGrupo/13",
     "method": "GET",
     "sortNum": 0,
     "created": "2022-08-08T17:04:21.701Z",
-    "modified": "2022-08-10T13:53:28.281Z",
+    "modified": "2022-08-11T00:26:34.690Z",
     "headers": [
       {
-        "name": "authorization",
-        "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiaWF0IjoxNjYwMTM5NTk1LCJleHAiOjE2NjAxNDMxOTV9.HE_66d1H893F90iGJniUQ3jYSXvrUU-KZodM6ToVLFg"
+        "name": "Authorization",
+        "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImlhdCI6MTY2MDE3NzEzNCwiZXhwIjoxNjYwMTgwNzM0fQ.ecRb9TvZp9KUVqMq-CuYAJj4zqZdVaZ2UacY4pmwV4Y"
       }
     ],
     "params": [],
@@ -309,17 +317,17 @@
     "method": "POST",
     "sortNum": 0,
     "created": "2022-08-08T17:04:21.701Z",
-    "modified": "2022-08-10T14:02:23.992Z",
+    "modified": "2022-08-10T21:14:31.466Z",
     "headers": [
       {
         "name": "Authorization",
-        "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiaWF0IjoxNjYwMTM5NTk1LCJleHAiOjE2NjAxNDMxOTV9.HE_66d1H893F90iGJniUQ3jYSXvrUU-KZodM6ToVLFg"
+        "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiaWF0IjoxNjYwMTY0Mzk0LCJleHAiOjE2NjAxNjc5OTR9.Wzcxstp-AbOuE4KpfQV1nwgT0LCEXnrkWPcyhzie2Zc"
       }
     ],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"origem\":1,\n  \"destino\":2,\n  \"data\":\"2016-09-22\", \n  \"espaco\":2,\n  \"valor\":6.0,\n  \"veiculo\":10,\n  \"obs\":\"vamos passar no posto mais barato que tiver ok?\"\n  \n\n} ",
+      "raw": "{\n  \"origem\":1,\n  \"destino\":2,\n  \"data\":\"2016-09-22 00:00:00\", \n  \"espaco\":2,\n  \"valor\":6.0,\n  \"veiculo\":10,\n  \"obs\":\"vamos passar no posto mais barato que tiver ok?\"\n  \n\n} ",
       "form": []
     },
     "tests": []
@@ -333,14 +341,38 @@
     "method": "GET",
     "sortNum": 0,
     "created": "2022-08-08T17:04:21.701Z",
-    "modified": "2022-08-10T13:53:50.460Z",
+    "modified": "2022-08-11T00:20:27.716Z",
     "headers": [
       {
         "name": "Authorization",
-        "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiaWF0IjoxNjYwMTM2MTAwLCJleHAiOjE2NjAxMzk3MDB9.xno3FIxgYmQwDQ4mOI1RWFqOUJnDFDz5sZbWmtyjpaU"
+        "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiaWF0IjoxNjYwMTY0Mzk0LCJleHAiOjE2NjAxNjc5OTR9.Wzcxstp-AbOuE4KpfQV1nwgT0LCEXnrkWPcyhzie2Zc"
       }
     ],
     "params": [],
+    "tests": []
+  },
+  {
+    "_id": "fc5044fd-0a13-49a1-8fd4-1ac684f973b4",
+    "colId": "history",
+    "containerId": "",
+    "name": "getUsuarioById Copy",
+    "url": "http://localhost:8080/api/getVeiculosUsuario",
+    "method": "GET",
+    "sortNum": 0,
+    "created": "2022-08-08T17:04:21.701Z",
+    "modified": "2022-08-10T23:34:18.322Z",
+    "headers": [
+      {
+        "name": "authorization",
+        "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiaWF0IjoxNjYwMTM5NTk1LCJleHAiOjE2NjAxNDMxOTV9.HE_66d1H893F90iGJniUQ3jYSXvrUU-KZodM6ToVLFg"
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n\"email\":\"gustavo@email.com\",\n\"senha\":\"123\"\n} ",
+      "form": []
+    },
     "tests": []
   }
 ]
